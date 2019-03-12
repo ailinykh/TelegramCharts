@@ -48,6 +48,32 @@ class DataLoader {
 // Chart
 class ChartView: UIView {
     
+    static let debug = true
+    static let debugColorBlack = UIColor.black.withAlphaComponent(0.5)
+    static var debugColor: UIColor {
+        let colors:[UIColor] = [.red, .green, .blue, .cyan, .yellow, .magenta, .orange, .purple]
+        return colors.randomElement()!.withAlphaComponent(0.1)
+    }
+//    open class var red: UIColor { get } // 1.0, 0.0, 0.0 RGB
+//
+//    open class var green: UIColor { get } // 0.0, 1.0, 0.0 RGB
+//
+//    open class var blue: UIColor { get } // 0.0, 0.0, 1.0 RGB
+//
+//    open class var cyan: UIColor { get } // 0.0, 1.0, 1.0 RGB
+//
+//    open class var yellow: UIColor { get } // 1.0, 1.0, 0.0 RGB
+//
+//    open class var magenta: UIColor { get } // 1.0, 0.0, 1.0 RGB
+//
+//    open class var orange: UIColor { get } // 1.0, 0.5, 0.0 RGB
+//
+//    open class var purple: UIColor { get } // 0.5, 0.0, 0.5 RGB
+//
+//    open class var brown: UIColor { get } // 0.6, 0.4, 0.2 RGB
+//
+//    open class var clear: UIColor { get } // 0.0 white, 0.0 alpha
+    
     var canvas = CGRect()
     
     override init(frame: CGRect) {
@@ -61,8 +87,17 @@ class ChartView: UIView {
     
     private func internalInit() {
         // TODO: Theme
-        canvas = frame.insetBy(dx: 50, dy: 50)
-        print(canvas)
+        canvas = bounds.inset(by: UIEdgeInsets(top: 10, left: 10, bottom: 30, right: 30))
+        
+        if ChartView.debug {
+            let rectLayer = CAShapeLayer()
+            rectLayer.fillColor = ChartView.debugColor.cgColor
+            rectLayer.strokeColor = ChartView.debugColorBlack.cgColor
+            rectLayer.frame = canvas
+            rectLayer.path = UIBezierPath(rect: canvas).cgPath
+            layer.addSublayer(rectLayer)
+        }
+        
         backgroundColor = UIColor.white
     }
     
