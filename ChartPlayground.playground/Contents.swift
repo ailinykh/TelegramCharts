@@ -49,30 +49,11 @@ class DataLoader {
 class ChartView: UIView {
     
     static let debug = true
-    static let debugColorBlack = UIColor.black.withAlphaComponent(0.5)
+    static let debugColorBlack = UIColor.black.withAlphaComponent(0.3)
     static var debugColor: UIColor {
         let colors:[UIColor] = [.red, .green, .blue, .cyan, .yellow, .magenta, .orange, .purple]
-        return colors.randomElement()!.withAlphaComponent(0.1)
+        return colors.randomElement()!.withAlphaComponent(0.05)
     }
-//    open class var red: UIColor { get } // 1.0, 0.0, 0.0 RGB
-//
-//    open class var green: UIColor { get } // 0.0, 1.0, 0.0 RGB
-//
-//    open class var blue: UIColor { get } // 0.0, 0.0, 1.0 RGB
-//
-//    open class var cyan: UIColor { get } // 0.0, 1.0, 1.0 RGB
-//
-//    open class var yellow: UIColor { get } // 1.0, 1.0, 0.0 RGB
-//
-//    open class var magenta: UIColor { get } // 1.0, 0.0, 1.0 RGB
-//
-//    open class var orange: UIColor { get } // 1.0, 0.5, 0.0 RGB
-//
-//    open class var purple: UIColor { get } // 0.5, 0.0, 0.5 RGB
-//
-//    open class var brown: UIColor { get } // 0.6, 0.4, 0.2 RGB
-//
-//    open class var clear: UIColor { get } // 0.0 white, 0.0 alpha
     
     var canvas = CGRect()
     
@@ -86,18 +67,17 @@ class ChartView: UIView {
     }
     
     private func internalInit() {
-        // TODO: Theme
-        canvas = bounds.inset(by: UIEdgeInsets(top: 10, left: 10, bottom: 30, right: 30))
+        let insets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        canvas = bounds.inset(by: insets)
         
         if ChartView.debug {
             let rectLayer = CAShapeLayer()
             rectLayer.fillColor = ChartView.debugColor.cgColor
             rectLayer.strokeColor = ChartView.debugColorBlack.cgColor
-            rectLayer.frame = canvas
             rectLayer.path = UIBezierPath(rect: canvas).cgPath
             layer.addSublayer(rectLayer)
         }
-        
+        // TODO: Theme
         backgroundColor = UIColor.white
     }
     
@@ -106,23 +86,19 @@ class ChartView: UIView {
     }
     
     func addChart(with color: UIColor, values: [Int]) {
-        let maxValue = values.max() ?? 0
+        let maxValue = values.max() ?? 1
         let offsetX = canvas.size.width/CGFloat(values.count)
-        print(type(of: offsetX))
         let ratio = canvas.size.height/CGFloat(maxValue)
-        let height = canvas.size.height
-        let points = values.enumerated().map { (i, value) in
-//            print(type(of: offsetX*i), type(of: height-ratio*value))
-//            return CGPoint(x: i*offsetX, y: height-ratio*value)
-            CGPoint(x: offsetX*CGFloat(i), y: height-ratio*CGFloat(value))
+        let points = values.enumerated().map { (i, value) -> CGPoint in
+            let x = canvas.origin.x + offsetX * CGFloat(i)
+            let y = canvas.origin.y + canvas.size.height - ratio * CGFloat(value)
+            return CGPoint(x: x, y: y)
         }
-        print(color)
         layer.addSublayer(LineLayer(color: color.cgColor, points: points))
     }
     
     override func draw(_ rect: CGRect) {
         super.draw(rect)
-        print(#function)
 //        let lineLayer = CALayer()
 //        lineLayer.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: 30)
 //        lineLayer.backgroundColor = UIColor.red.cgColor
@@ -178,9 +154,7 @@ view.addSubview(chartView)
 let chartDataArray = DataLoader.getData()
 let chartData = chartDataArray.first!
 
-
 print(chartData.colors)
-print("=============================")
 
 let charts = chartData.columns.compactMap { (data) -> [Int]? in
     var data = data
@@ -192,8 +166,8 @@ let charts = chartData.columns.compactMap { (data) -> [Int]? in
 
 let colors = Array(chartData.colors.values)
 
-chartView.addChart(with: UIColor(hexString: colors[0]), values: [10, 20, 35, 40, 90, 150, 4])
-
-//charts.enumerated().forEach { i, chart in
-//    chartView.addChart(with: UIColor(hexString: colors[i]), values: chart)
-//}
+//chartView.addChart(with: UIColor(hexString: colors[0]), values: [10, 20, 35, 40, 90, 150, 4])
+//chartView.addChart(with: UIColor(hexString: colors[0]), values: charts[0])
+charts.enumerated().forEach { i, chart in
+    chartView.addChart(with: UIColor(hexString: colors[i]), values: chart)
+}
