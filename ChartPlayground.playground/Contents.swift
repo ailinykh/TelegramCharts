@@ -45,6 +45,29 @@ class DataLoader {
     }
 }
 
+class SashesControl: UIControl {
+    
+    let leftSash = UIView()
+    let rightSash = UIView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        internalInit()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func internalInit() {
+        let rectLayer = CAShapeLayer()
+        rectLayer.fillColor = ChartView.debugColor.cgColor
+        rectLayer.strokeColor = ChartView.debugColorBlack.cgColor
+        rectLayer.path = UIBezierPath(rect: bounds).cgPath
+        layer.addSublayer(rectLayer)
+    }
+}
+
 // Chart
 class ChartView: UIView {
     
@@ -67,7 +90,7 @@ class ChartView: UIView {
     }
     
     private func internalInit() {
-        let insets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        let insets = UIEdgeInsets(top: 20, left: 20, bottom: 80, right: 20)
         canvas = bounds.inset(by: insets)
         
         if ChartView.debug {
@@ -79,6 +102,11 @@ class ChartView: UIView {
         }
         // TODO: Theme
         backgroundColor = UIColor.white
+        var f = bounds
+        f.size.height = 64
+        f.origin.y = bounds.size.height - f.size.height
+        let sashes = SashesControl(frame: f)
+        addSubview(sashes)
     }
     
     private func convertValueToPoint(value: Int) -> CGPoint {
@@ -147,7 +175,7 @@ let view = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 568))
 //view.backgroundColor = UIColor(displayP3Red: 0.9, green: 0.9, blue: 0.9, alpha: 1.0)
 PlaygroundPage.current.liveView = view
 
-let chartView = ChartView(frame: CGRect(x: 0, y: 30, width: 320, height: 320))
+let chartView = ChartView(frame: CGRect(x: 0, y: 30, width: 320, height: 380))
 view.addSubview(chartView)
 
 
