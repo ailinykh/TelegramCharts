@@ -358,6 +358,7 @@ let colors = Array(chartData.colors.values)
 
 //chartView.addChart(with: UIColor(hexString: colors[0]), values: [10, 20, 35, 40, 90, 150, 4])
 //chartView.addChart(with: UIColor(hexString: colors[0]), values: charts[0])
+print(charts)
 charts.enumerated().forEach { i, chart in
     chartView.addChart(with: UIColor(hexString: colors[i]), values: chart)
 }

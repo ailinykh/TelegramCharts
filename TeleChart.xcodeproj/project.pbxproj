@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		737C014022399C760026D2D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C013F22399C760026D2D3 /* AppDelegate.swift */; };
-		737C014222399C760026D2D3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C014122399C760026D2D3 /* ViewController.swift */; };
 		737C014522399C760026D2D3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 737C014322399C760026D2D3 /* Main.storyboard */; };
 		737C014722399C780026D2D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 737C014622399C780026D2D3 /* Assets.xcassets */; };
 		737C014A22399C780026D2D3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 737C014822399C780026D2D3 /* LaunchScreen.storyboard */; };
@@ -23,7 +22,6 @@
 /* Begin PBXFileReference section */
 		737C013C22399C760026D2D3 /* TeleChart.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TeleChart.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		737C013F22399C760026D2D3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		737C014122399C760026D2D3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		737C014422399C760026D2D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		737C014622399C780026D2D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		737C014922399C780026D2D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -35,7 +33,7 @@
 		737C01582239A7550026D2D3 /* chart_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = chart_data.json; sourceTree = "<group>"; };
 		737C015A2239A7840026D2D3 /* ChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartData.swift; sourceTree = "<group>"; };
 		737C015C2239A7F60026D2D3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		737C015E2239AC3C0026D2D3 /* ChartPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ChartPlayground.playground; sourceTree = "<group>"; };
+		737C015E2239AC3C0026D2D3 /* ChartPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ChartPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,7 +75,6 @@
 				737C014822399C780026D2D3 /* LaunchScreen.storyboard */,
 				737C014322399C760026D2D3 /* Main.storyboard */,
 				737C015122399CB60026D2D3 /* SashesControl.swift */,
-				737C014122399C760026D2D3 /* ViewController.swift */,
 				737C01542239A1E90026D2D3 /* TableViewController.swift */,
 				737C01562239A5EC0026D2D3 /* ChartView.swift */,
 				737C015A2239A7840026D2D3 /* ChartData.swift */,
@@ -163,7 +160,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				737C014222399C760026D2D3 /* ViewController.swift in Sources */,
 				737C014022399C760026D2D3 /* AppDelegate.swift in Sources */,
 				737C015222399CB60026D2D3 /* SashesControl.swift in Sources */,
 				737C01572239A5EC0026D2D3 /* ChartView.swift in Sources */,

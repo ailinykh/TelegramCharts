@@ -110,6 +110,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Statistics" id="e1Q-2d-ykC"/>
+                    <connections>
+                        <outlet property="chartView" destination="Jn5-R1-KeI" id="RPi-yK-SjP"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L2u-nR-aDR" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

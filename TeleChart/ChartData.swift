@@ -8,11 +8,49 @@
 
 import UIKit
 
+struct StrInt: Decodable {
+    let value: Any
+    
+    init(from decoder: Decoder) throws {
+        if let int = try? Int(from: decoder) {
+            value = int
+            return
+        }
+        value = try String(from: decoder)
+    }
+}
+
 struct ChartData: Decodable {
-    let columns: [[Any]]
+    let columns: [String: [Int]]
     let types: [String: String]
     let names: [String: String]
     let colors: [String: String]
+    
+    enum CodingKeys: String, CodingKey {
+        case columns
+        case types
+        case names
+        case colors
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        types = try container.decode([String: String].self, forKey: .types)
+        names = try container.decode([String: String].self, forKey: .names)
+        colors = try container.decode([String: String].self, forKey: .colors)
+        
+        var columnsArray = try container.nestedUnkeyedContainer(forKey: .columns)
+        var columnsDict = [String: [Int]]()
+        
+        while !columnsArray.isAtEnd {
+            var arr = try columnsArray.decode([StrInt].self)
+            let key = arr.remove(at: 0).value as! String
+            let value = arr.map { $0.value as! Int }
+            columnsDict[key] = value
+        }
+        
+        columns = columnsDict
+    }
 }
 
 
@@ -24,17 +62,3 @@ class DataLoader {
         return try! JSONDecoder().decode([ChartData].self, from: data!)
     }
 }
-
-//struct ChartData {
-//    var colors: [String: String]
-//    var types: [String: String]
-//    var columns: [[Any]]
-//    var names: [String: String]
-//
-//    init(_ dict: [String: Any]) {
-//        colors = dict["colors"] as! [String: String]
-//        types = dict["types"] as! [String: String]
-//        columns = dict["columns"] as! [[Any]]
-//        names = dict["names"] as! [String: String]
-//    }
-//}

@@ -10,11 +10,18 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
+    @IBOutlet var chartView: ChartView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let chartData = DataLoader.getData()
-        print(chartData)
+        let chartData = DataLoader.getData().first!
+        chartData.columns.forEach {
+            if $0.key.starts(with: "y") {
+                let color = UIColor(hexString: chartData.colors[$0.key]!)
+                chartView.addChart(with: color, values: $0.value)
+            }
+        }
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
