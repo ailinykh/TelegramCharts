@@ -17,22 +17,42 @@ class TableViewController: UITableViewController, SashesControlDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        reloadData()
+        reloadData()
         
         sashesControl.delegate = self
+        sashesControl.setSelection(range: 0...100)
     }
     
     func sashesControl(_ control: SashesControl, didChangeSelectionRange range: ClosedRange<Int>) {
-        print(range)
+//        let leftEdge = control.leftOverlay.frame.origin.x + control.leftOverlay.frame.size.width - control.leftSash.frame.size.width
+//        let rightEdge = control.rightOverlay.frame.origin.x + control.rightSash.frame.size.width
+//        let mini = range.min() ?? 0
+//        let maxi = range.max() ?? 100
+//        let delta = control.frame.size.width/100
+//        print("range:", range, "constraints:", control.leftSashConstraint.constant, control.rightSashConstraint.constant, "edges:", leftEdge+16.0, rightEdge-16.0, "delta:", delta*CGFloat(mini)+16.0, control.frame.size.width-delta*CGFloat(maxi)+16.0)
+        
+        let mini = range.min() ?? 0
+        let maxi = range.max() ?? 100
+        var f = chartView.scrollLayer.frame
+        f.size.width = 5000-5000/100*CGFloat(maxi-mini)
+        chartView.scrollLayer.frame = f
+        chartView.scrollLayer.updateSublayers()
+        print("range:", range, "scrollLayer.frame:", chartView.scrollLayer.frame)
     }
 
     private func reloadData() {
-        let chartData = DataLoader.getData().first!
-        chartData.columns.forEach {
-            if $0.key.starts(with: "y") {
-                let color = UIColor(hexString: chartData.colors[$0.key]!)
-                chartView.addChart(with: color, values: $0.value)
+//        let chartData = DataLoader.getData().first!
+        for (i, chartData) in DataLoader.getData().enumerated() {
+            print("chart:", i)
+            chartData.columns.forEach {
+                if $0.key.starts(with: "y") {
+                    let hex = chartData.colors[$0.key]!
+                    let color = UIColor(hexString: hex)
+                    chartView.addChart(with: color, values: $0.value)
+                    print("setting chart:", hex, "\($0.value[...3])... count:", $0.value.count)
+                }
             }
+            return
         }
     }
     

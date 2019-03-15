@@ -103,6 +103,17 @@ class SashesControl: UIControl {
         internalInit()
     }
     
+    func setSelection(range: ClosedRange<Int>) {
+        
+        let mini = max(range.min() ?? 0, 0)
+        let maxi = min(range.max() ?? 100, 100)
+        let delta = frame.size.width/100
+        leftSashConstraint.constant = delta*CGFloat(mini)+leftSash.frame.width
+        rightSashConstraint.constant = frame.size.width-delta*CGFloat(maxi)+rightSash.frame.width
+        
+        selectionRange = range
+    }
+    
     private func internalInit() {
         leftOverlay.frame = CGRect(x: 0, y: 0, width: 16, height: bounds.size.height)
         rightOverlay.frame = CGRect(x: bounds.size.width-16, y: 0, width: 16, height: bounds.size.height)
