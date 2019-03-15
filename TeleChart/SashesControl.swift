@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol SashesControlDelegate: AnyObject {
+    func sashesControl(_ control: SashesControl, didChangeSelectionRange range: ClosedRange<Int>)
+}
+
 class SashButton: UIButton {
     var flipped = false
     
@@ -70,6 +74,10 @@ class SashesControl: UIControl {
         case center
         case right
     }
+    
+    weak var delegate: SashesControlDelegate?
+    
+    var selectionRange = 0...100
     
     var movingPart = MovingPart.none
     var lastMovedX = CGFloat(0.0)
@@ -178,6 +186,16 @@ class SashesControl: UIControl {
                 }
             default:
                 break
+            }
+            
+            if movingPart != .none {
+                let leftEdge = leftOverlay.frame.origin.x + leftOverlay.frame.size.width - leftSash.frame.size.width
+                let rightEdge = rightOverlay.frame.origin.x + rightSash.frame.size.width
+                let from = Int(100*leftEdge/bounds.size.width)
+                let to = Int(100*rightEdge/bounds.size.width)
+                selectionRange = from...to
+                
+                delegate?.sashesControl(self, didChangeSelectionRange: selectionRange)
             }
         case .cancelled, .ended:
             movingPart = .none

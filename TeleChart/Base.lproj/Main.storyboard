@@ -13,7 +13,7 @@
         <scene sceneID="nyq-qA-33Y">
             <objects>
                 <tableViewController id="bX8-YE-7OK" customClass="TableViewController" customModule="TeleChart" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="mds-Lx-5F4">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="mds-Lx-5F4">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
@@ -112,6 +112,7 @@
                     <navigationItem key="navigationItem" title="Statistics" id="e1Q-2d-ykC"/>
                     <connections>
                         <outlet property="chartView" destination="Jn5-R1-KeI" id="RPi-yK-SjP"/>
+                        <outlet property="sashesControl" destination="5f0-go-5PG" id="q60-yE-Pr1"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="L2u-nR-aDR" userLabel="First Responder" sceneMemberID="firstResponder"/>
