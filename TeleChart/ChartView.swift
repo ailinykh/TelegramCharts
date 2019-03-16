@@ -43,17 +43,7 @@ class ChartView: UIView {
     
     private func internalInit() {
         scrollLayer.scrollMode = .horizontally
-        var f = frame
-        f.size.width = 5000.0
-        scrollLayer.frame = f
-        
         layer.addSublayer(scrollLayer)
-        
-        print(frame, scrollLayer.frame)
-//        let insets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-//        canvas = frame.inset(by: insets)
-//        canvas = frame
-//        print(frame, canvas)
         
         if ChartView.debug {
             let rectLayer = CAShapeLayer()
@@ -62,7 +52,6 @@ class ChartView: UIView {
             rectLayer.path = UIBezierPath(rect: scrollLayer.frame).cgPath
             scrollLayer.addSublayer(rectLayer)
         }
-        print(frame, scrollLayer.frame)
         // TODO: Theme
         backgroundColor = UIColor.white
     }
@@ -72,34 +61,20 @@ class ChartView: UIView {
     }
     
     func addChart(with color: UIColor, values: [Int]) {
+        print(#function, color.hexString, "\(values[...3])... count:", values.count)
         scrollLayer.addSublayer(LineLayer(color: color.cgColor, values: values, points: points(from: values, for: scrollLayer.frame)))
         scrollLayer.updateSublayers()
     }
-    
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        //        let lineLayer = CALayer()
-        //        lineLayer.frame = CGRect(x: 0, y: 0, width: bounds.size.width, height: 30)
-        //        lineLayer.backgroundColor = UIColor.red.cgColor
-        //
-        //        let replicatorYLayer = CAReplicatorLayer()
-        //        replicatorYLayer.instanceCount = 3
-        //        replicatorYLayer.instanceTransform = CATransform3DMakeTranslation(0, 100, 0)
-        //        replicatorYLayer.addSublayer(lineLayer)
-        //        layer.addSublayer(replicatorYLayer)
-        //        layer.addSublayer(lineLayer)
-    }
-    
-    
 }
 
 class ScrollLayer: CAScrollLayer {
+    var lineLayers: [LineLayer] {
+        return sublayers?.compactMap { $0 as? LineLayer } ?? []
+    }
+    
     func updateSublayers() {
-        guard let sublayers = sublayers as? [CALayer] else { return }
-        for layer in sublayers {
-            if let layer = layer as? LineLayer {
-                layer.points = points(from: layer.values, for: frame)
-            }
+        lineLayers.forEach {
+            $0.points = points(from: $0.values, for: frame)
         }
     }
 }
@@ -125,7 +100,7 @@ class LineLayer: CAShapeLayer {
         updatePath()
     }
     
-    private func updatePath() {
+    private func updatePath(animated: Bool = false) {
         let path = UIBezierPath()
         points.enumerated().forEach { i, point in
             if i == 0 {
@@ -134,16 +109,16 @@ class LineLayer: CAShapeLayer {
                 path.addLine(to: point)
             }
         }
-        //        path.close()
-        let animation = CABasicAnimation(keyPath: "path")
-        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        animation.fromValue = self.path
-        animation.toValue = path.cgPath
-        animation.duration = 0.4
-        animation.fillMode = CAMediaTimingFillMode.backwards
-//        animation.isRemovedOnCompletion = false
-        add(animation, forKey: "path")
         
+        if animated {
+            let animation = CABasicAnimation(keyPath: "path")
+            animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            animation.fromValue = self.path
+            animation.toValue = path.cgPath
+            animation.duration = 0.4
+            animation.fillMode = CAMediaTimingFillMode.backwards
+            add(animation, forKey: "path")
+        }
         self.path = path.cgPath
     }
     

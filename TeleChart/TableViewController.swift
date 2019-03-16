@@ -41,15 +41,13 @@ class TableViewController: UITableViewController, SashesControlDelegate {
     }
 
     private func reloadData() {
-//        let chartData = DataLoader.getData().first!
         for (i, chartData) in DataLoader.getData().enumerated() {
-            print("chart:", i)
+            print(#function, "Drawing chart:", i, chartData.names, chartData.types)
             chartData.columns.forEach {
                 if $0.key.starts(with: "y") {
                     let hex = chartData.colors[$0.key]!
                     let color = UIColor(hexString: hex)
                     chartView.addChart(with: color, values: $0.value)
-                    print("setting chart:", hex, "\($0.value[...3])... count:", $0.value.count)
                 }
             }
             return
