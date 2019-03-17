@@ -34,6 +34,10 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="375" height="311"/>
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </view>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="khf-ta-5zB" customClass="ChartView" customModule="TeleChart" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="315" width="375" height="56"/>
+                                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </view>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5f0-go-5PG" customClass="SashesControl" customModule="TeleChart" customModuleProvider="target">
                                                             <rect key="frame" x="0.0" y="311" width="375" height="64"/>
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -44,13 +48,17 @@
                                                     </subviews>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
+                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="leading" secondItem="khf-ta-5zB" secondAttribute="leading" id="24V-4u-dk4"/>
                                                         <constraint firstAttribute="trailing" secondItem="5f0-go-5PG" secondAttribute="trailing" id="5HR-Hx-ZTD"/>
                                                         <constraint firstItem="Jn5-R1-KeI" firstAttribute="leading" secondItem="wrl-Av-hDc" secondAttribute="leading" id="AUs-47-deb"/>
                                                         <constraint firstItem="5f0-go-5PG" firstAttribute="leading" secondItem="wrl-Av-hDc" secondAttribute="leading" id="M4X-Pb-u8d"/>
+                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="bottom" secondItem="khf-ta-5zB" secondAttribute="bottom" constant="4" id="PLe-yu-0QV"/>
                                                         <constraint firstAttribute="width" secondItem="wrl-Av-hDc" secondAttribute="height" multiplier="1:1" id="WQb-Si-ws8"/>
                                                         <constraint firstItem="5f0-go-5PG" firstAttribute="top" secondItem="Jn5-R1-KeI" secondAttribute="bottom" id="ZKN-j4-bTL"/>
                                                         <constraint firstAttribute="trailing" secondItem="Jn5-R1-KeI" secondAttribute="trailing" id="i6H-xk-jEc"/>
                                                         <constraint firstAttribute="bottom" secondItem="5f0-go-5PG" secondAttribute="bottom" id="lAI-Dp-KJE"/>
+                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="trailing" secondItem="khf-ta-5zB" secondAttribute="trailing" id="rXC-VX-gCB"/>
+                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="top" secondItem="khf-ta-5zB" secondAttribute="top" constant="-4" id="smk-dW-2Gk"/>
                                                         <constraint firstItem="Jn5-R1-KeI" firstAttribute="top" secondItem="wrl-Av-hDc" secondAttribute="top" id="zhz-jI-YRM"/>
                                                     </constraints>
                                                 </view>
@@ -111,7 +119,9 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Statistics" id="e1Q-2d-ykC"/>
                     <connections>
+                        <outlet property="chartCell" destination="Gqs-z8-SUA" id="R0u-i8-BYG"/>
                         <outlet property="chartView" destination="Jn5-R1-KeI" id="RPi-yK-SjP"/>
+                        <outlet property="miniChartView" destination="khf-ta-5zB" id="yKl-LI-HgE"/>
                         <outlet property="sashesControl" destination="5f0-go-5PG" id="q60-yE-Pr1"/>
                     </connections>
                 </tableViewController>

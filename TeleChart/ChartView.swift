@@ -13,10 +13,16 @@ func points(from values: [Int], for frame: CGRect) -> [CGPoint] {
     let offsetX = frame.size.width/CGFloat(values.count)
     let ratio = frame.height/CGFloat(maxValue)
     return values.enumerated().map { (i, value) -> CGPoint in
-        let x = frame.origin.x + offsetX * CGFloat(i)
-        let y = frame.origin.y + frame.size.height - ratio * CGFloat(value)
+        let x = offsetX * CGFloat(i)
+        let y = frame.size.height - ratio * CGFloat(value)
         return CGPoint(x: x, y: y)
     }
+}
+
+struct ChartRange {
+    let start: Int
+    let end: Int
+    let scale: CGFloat
 }
 
 class ChartView: UIView {
@@ -42,20 +48,21 @@ class ChartView: UIView {
         internalInit()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        var f = scrollLayer.frame
+        f.size.height = bounds.size.height
+        f.size.width = max(f.size.width, bounds.size.width)
+        scrollLayer.frame = f
+        scrollLayer.updateSublayers()
+    }
+    
     private func internalInit() {
         scrollLayer.scrollMode = .horizontally
-        scrollLayer.frame = frame
         layer.addSublayer(scrollLayer)
-        
-        if ChartView.debug {
-            let rectLayer = CAShapeLayer()
-            rectLayer.fillColor = ChartView.debugColor.cgColor
-            rectLayer.strokeColor = ChartView.debugColorBlack.cgColor
-            rectLayer.path = UIBezierPath(rect: scrollLayer.frame).cgPath
-            scrollLayer.addSublayer(rectLayer)
-        }
         // TODO: Theme
-        backgroundColor = UIColor.white
+        backgroundColor = ChartView.debugColor
+        scrollLayer.backgroundColor = ChartView.debugColor.cgColor
     }
     
     private func convertValueToPoint(value: Int) -> CGPoint {
@@ -74,6 +81,19 @@ class ChartView: UIView {
         scrollLayer.updateSublayers()
     }
     
+    func set(range: ChartRange, animated: Bool = false) {
+        let width = bounds.width/range.scale
+        let x = width/100*CGFloat(range.start)
+        
+        var f = scrollLayer.frame
+        f.origin.x = -x
+        f.size.width = width
+        
+        print(#function, range, f)
+        scrollLayer.frame = f
+        scrollLayer.updateSublayers()
+    }
+    
     func fit(range: ClosedRange<Int>) {
         guard
             let mini = range.min(),
@@ -82,9 +102,15 @@ class ChartView: UIView {
         
         // calculate precision
         let minWidth = frame.size.width
-        let maxWidth = minWidth/10*CGFloat(maximumPoints)
+        
+        
+        let maxWidth = frame.size.width/10*CGFloat(maximumPoints)
         let delta = (maxWidth-minWidth)/100
         let width = round(minWidth+CGFloat(100-(maxi-mini))*delta)
+        
+        let start = maxWidth/100*CGFloat(mini)
+        let end = maxWidth/100*CGFloat(maxi)
+        print(#function, "Showing [\(mini)...\(maxi)]", start, end)
         
         // calculate origin offset
         let x = round(width*CGFloat(mini)/100)
@@ -108,8 +134,10 @@ class ScrollLayer: CAScrollLayer {
     
     func updateSublayers() {
         lineLayers.forEach {
+//            $0.frame = bounds
             $0.points = points(from: $0.values, for: frame)
             $0.updatePath(animated: true)
+            $0.backgroundColor = ChartView.debugColor.cgColor
         }
     }
 }
@@ -127,13 +155,17 @@ class LineLayer: CAShapeLayer {
         lineWidth = 2
         strokeColor = color
         fillColor = UIColor.clear.cgColor
-        
-        updatePath()
+    }
+    
+    override init(layer: Any) {
+        self.color = (layer as! LineLayer).color
+        self.values = (layer as! LineLayer).values
+        self.points = (layer as! LineLayer).points
+        super.init(layer: layer)
     }
     
     func updatePath(animated: Bool = false) {
-//        print(#function, animated)
-        
+//        print(#function, frame, points[...3])
         let path = UIBezierPath()
         points.enumerated().forEach { i, point in
             if i == 0 {

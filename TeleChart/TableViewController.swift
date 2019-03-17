@@ -10,7 +10,9 @@ import UIKit
 
 class TableViewController: UITableViewController, SashesControlDelegate {
 
+    @IBOutlet var chartCell: UITableViewCell!
     @IBOutlet var chartView: ChartView!
+    @IBOutlet var miniChartView: ChartView!
     @IBOutlet var sashesControl: SashesControl!
     
     var observation: NSKeyValueObservation?
@@ -19,40 +21,41 @@ class TableViewController: UITableViewController, SashesControlDelegate {
         super.viewDidLoad()
         reloadData()
         
+        chartCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: UIScreen.main.bounds.width)
+        
         sashesControl.delegate = self
-        sashesControl.setSelection(range: 0...100)
+        sashesControl.setSelection(range: 40...70, precision: 1.0)
     }
     
     func sashesControl(_ control: SashesControl, didChangeSelectionRange range: ClosedRange<Int>) {
-//        let leftEdge = control.leftOverlay.frame.origin.x + control.leftOverlay.frame.size.width - control.leftSash.frame.size.width
-//        let rightEdge = control.rightOverlay.frame.origin.x + control.rightSash.frame.size.width
-//        let mini = range.min() ?? 0
-//        let maxi = range.max() ?? 100
-//        let delta = control.frame.size.width/100
-//        print("range:", range, "constraints:", control.leftSashConstraint.constant, control.rightSashConstraint.constant, "edges:", leftEdge+16.0, rightEdge-16.0, "delta:", delta*CGFloat(mini)+16.0, control.frame.size.width-delta*CGFloat(maxi)+16.0)
-        
-        chartView.fit(range: range)
-        return
-        
-        let mini = range.min() ?? 0
-        let maxi = range.max() ?? 100
-        var f = chartView.scrollLayer.frame
-        f.size.width = 5000-5000/100*CGFloat(maxi-mini)
-        chartView.scrollLayer.frame = f
-        chartView.scrollLayer.updateSublayers()
-        print("range:", range, "scrollLayer.frame:", chartView.scrollLayer.frame)
+//        guard
+//            let mini = range.min(),
+//            let maxi = range.max()
+//            else { print(#function, "Wrong range:", range); return }
+//        
+//        chartView.fit(range: range)
+    }
+    
+    func sashesControl(_ control: SashesControl, didChangeChartRange range: ChartRange) {
+        chartView.set(range: range)
     }
 
     private func reloadData() {
         for (i, chartData) in DataLoader.getData().enumerated() {
             print(#function, "Drawing chart:", i, chartData.names, chartData.types)
-            chartData.columns.forEach {
-                if $0.key.starts(with: "y") {
-                    let hex = chartData.colors[$0.key]!
+            for column in chartData.columns {
+                if column.key.starts(with: "y") {
+                    let hex = chartData.colors[column.key]!
                     let color = UIColor(hexString: hex)
-                    chartView.addChart(with: color, values: $0.value)
+                    
+                    chartView.addChart(with: color, values: column.value)
+                    miniChartView.addChart(with: color, values: column.value)
                 }
             }
+            let color = UIColor.blue
+            let fake = [1, 2, 4, 7, 10, 15, 22, 50, 70, 100, 150, 76, 50, 90, 40, 20, 10]
+            chartView.addChart(with: color, values: fake)
+            miniChartView.addChart(with: color, values: fake)
             return
         }
     }
