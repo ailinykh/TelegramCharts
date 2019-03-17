@@ -30,6 +30,7 @@ class ChartView: UIView {
     
 //    var canvas = CGRect()
     let scrollLayer = ScrollLayer()
+    var maximumPoints = 0
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,6 +44,7 @@ class ChartView: UIView {
     
     private func internalInit() {
         scrollLayer.scrollMode = .horizontally
+        scrollLayer.frame = frame
         layer.addSublayer(scrollLayer)
         
         if ChartView.debug {
@@ -62,8 +64,40 @@ class ChartView: UIView {
     
     func addChart(with color: UIColor, values: [Int]) {
         print(#function, color.hexString, "\(values[...3])... count:", values.count)
+        
+        if values.count > maximumPoints {
+            maximumPoints = values.count
+            print(#function, "Maximum points now:", maximumPoints)
+        }
+        
         scrollLayer.addSublayer(LineLayer(color: color.cgColor, values: values, points: points(from: values, for: scrollLayer.frame)))
         scrollLayer.updateSublayers()
+    }
+    
+    func fit(range: ClosedRange<Int>) {
+        guard
+            let mini = range.min(),
+            let maxi = range.max()
+        else { print(#function, "Wrong range:", range); return }
+        
+        // calculate precision
+        let minWidth = frame.size.width
+        let maxWidth = minWidth/10*CGFloat(maximumPoints)
+        let delta = (maxWidth-minWidth)/100
+        let width = round(minWidth+CGFloat(100-(maxi-mini))*delta)
+        
+        // calculate origin offset
+        let x = round(width*CGFloat(mini)/100)
+        
+        var f = scrollLayer.frame
+        f.origin.x = -x
+        f.size.width = width
+        
+        if !f.equalTo(scrollLayer.frame) {
+            print(#function, range, "old:", scrollLayer.frame, "new:", f)
+            scrollLayer.frame = f
+            scrollLayer.updateSublayers()
+        }
     }
 }
 
@@ -75,6 +109,7 @@ class ScrollLayer: CAScrollLayer {
     func updateSublayers() {
         lineLayers.forEach {
             $0.points = points(from: $0.values, for: frame)
+            $0.updatePath(animated: true)
         }
     }
 }
@@ -82,11 +117,7 @@ class ScrollLayer: CAScrollLayer {
 class LineLayer: CAShapeLayer {
     var color: CGColor
     var values: [Int]
-    var points: [CGPoint] {
-        didSet {
-            updatePath()
-        }
-    }
+    var points: [CGPoint]
     
     init(color: CGColor, values: [Int], points: [CGPoint]) {
         self.color = color
@@ -100,7 +131,9 @@ class LineLayer: CAShapeLayer {
         updatePath()
     }
     
-    private func updatePath(animated: Bool = false) {
+    func updatePath(animated: Bool = false) {
+//        print(#function, animated)
+        
         let path = UIBezierPath()
         points.enumerated().forEach { i, point in
             if i == 0 {

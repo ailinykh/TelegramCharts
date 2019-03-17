@@ -31,6 +31,9 @@ class TableViewController: UITableViewController, SashesControlDelegate {
 //        let delta = control.frame.size.width/100
 //        print("range:", range, "constraints:", control.leftSashConstraint.constant, control.rightSashConstraint.constant, "edges:", leftEdge+16.0, rightEdge-16.0, "delta:", delta*CGFloat(mini)+16.0, control.frame.size.width-delta*CGFloat(maxi)+16.0)
         
+        chartView.fit(range: range)
+        return
+        
         let mini = range.min() ?? 0
         let maxi = range.max() ?? 100
         var f = chartView.scrollLayer.frame
