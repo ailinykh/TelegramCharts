@@ -9,7 +9,6 @@
 import UIKit
 
 protocol SashesControlDelegate: AnyObject {
-    func sashesControl(_ control: SashesControl, didChangeSelectionRange range: ClosedRange<Int>)
     func sashesControl(_ control: SashesControl, didChangeChartRange range: ChartRange)
 }
 
@@ -25,8 +24,6 @@ class SashesControl: UIControl {
     weak var delegate: SashesControlDelegate?
     
     var range = ChartRange(start: 0, end: 100, scale: 1.0)
-    var selectionRange = 0...100
-    var precision = CGFloat (1.0)
     
     var movingPart = MovingPart.none
     var lastMovedX = CGFloat(0.0)
@@ -52,17 +49,13 @@ class SashesControl: UIControl {
         internalInit()
     }
     
-    func setSelection(range: ClosedRange<Int>, precision p: CGFloat) {
-        
-        let mini = max(range.min() ?? 0, 0)
-        let maxi = min(range.max() ?? 100, 100)
-        let delta = frame.size.width/100
-        leftSashConstraint.constant = delta*CGFloat(mini)+leftSash.frame.width
-        rightSashConstraint.constant = frame.size.width-delta*CGFloat(maxi)+rightSash.frame.width
-        
-        selectionRange = range
-        precision = p
-    }
+//    func setSelection(range: ClosedRange<Int>, precision p: CGFloat) {
+//        let mini = max(range.min() ?? 0, 0)
+//        let maxi = min(range.max() ?? 100, 100)
+//        let delta = frame.size.width/100
+//        leftSashConstraint.constant = delta*CGFloat(mini)+leftSash.frame.width
+//        rightSashConstraint.constant = frame.size.width-delta*CGFloat(maxi)+rightSash.frame.width
+//    }
     
     private func internalInit() {
         backgroundColor = UIColor.clear
@@ -117,7 +110,7 @@ class SashesControl: UIControl {
         
         switch sender.state {
         case .began:
-            if abs(pointLeft.x) < abs(pointRight.x) && abs(pointLeft.x) < leftSash.frame.size.width {
+            if abs(pointLeft.x) < abs(pointRight.x) && abs(pointLeft.x) < leftSash.frame.size.width*2 {
                 movingPart = .left
             }
             else if abs(pointLeft.x) > abs(pointRight.x) && abs(pointRight.x) < rightSash.frame.size.width {
@@ -159,23 +152,18 @@ class SashesControl: UIControl {
                 
                 // ensure range size didn't changed
                 if movingPart == .center {
-                    if let mini = selectionRange.min(), let maxi = selectionRange.max() {
-                        let delta = maxi - mini - (to - from)
-                        if delta != 0 {
+                    let delta = range.end - range.start - (to - from)
+                    if delta != 0 {
 //                            print(#function, "⚠️ Got precision error", delta, "from:", from, "to:", to)
-                            if to < 100 {
-                                to += delta
-                            } else if from > 0 {
-                                from -= delta
-                            }
+                        if to < 100 {
+                            to += delta
+                        } else if from > 0 {
+                            from -= delta
                         }
                     }
                 }
-                selectionRange = from...to
                 
                 let scale = (rightEdge - leftEdge) / frame.size.width
-                
-                delegate?.sashesControl(self, didChangeSelectionRange: selectionRange)
                 delegate?.sashesControl(self, didChangeChartRange: ChartRange(start: from, end: to, scale: scale))
             }
         case .cancelled, .ended:

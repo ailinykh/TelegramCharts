@@ -24,16 +24,6 @@ class TableViewController: UITableViewController, SashesControlDelegate {
         chartCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: UIScreen.main.bounds.width)
         
         sashesControl.delegate = self
-        sashesControl.setSelection(range: 40...70, precision: 1.0)
-    }
-    
-    func sashesControl(_ control: SashesControl, didChangeSelectionRange range: ClosedRange<Int>) {
-//        guard
-//            let mini = range.min(),
-//            let maxi = range.max()
-//            else { print(#function, "Wrong range:", range); return }
-//        
-//        chartView.fit(range: range)
     }
     
     func sashesControl(_ control: SashesControl, didChangeChartRange range: ChartRange) {

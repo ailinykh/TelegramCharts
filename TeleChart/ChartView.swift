@@ -93,38 +93,6 @@ class ChartView: UIView {
         scrollLayer.frame = f
         scrollLayer.updateSublayers()
     }
-    
-    func fit(range: ClosedRange<Int>) {
-        guard
-            let mini = range.min(),
-            let maxi = range.max()
-        else { print(#function, "Wrong range:", range); return }
-        
-        // calculate precision
-        let minWidth = frame.size.width
-        
-        
-        let maxWidth = frame.size.width/10*CGFloat(maximumPoints)
-        let delta = (maxWidth-minWidth)/100
-        let width = round(minWidth+CGFloat(100-(maxi-mini))*delta)
-        
-        let start = maxWidth/100*CGFloat(mini)
-        let end = maxWidth/100*CGFloat(maxi)
-        print(#function, "Showing [\(mini)...\(maxi)]", start, end)
-        
-        // calculate origin offset
-        let x = round(width*CGFloat(mini)/100)
-        
-        var f = scrollLayer.frame
-        f.origin.x = -x
-        f.size.width = width
-        
-        if !f.equalTo(scrollLayer.frame) {
-            print(#function, range, "old:", scrollLayer.frame, "new:", f)
-            scrollLayer.frame = f
-            scrollLayer.updateSublayers()
-        }
-    }
 }
 
 class ScrollLayer: CAScrollLayer {
@@ -134,7 +102,6 @@ class ScrollLayer: CAScrollLayer {
     
     func updateSublayers() {
         lineLayers.forEach {
-//            $0.frame = bounds
             $0.points = points(from: $0.values, for: frame)
             $0.updatePath(animated: true)
             $0.backgroundColor = ChartView.debugColor.cgColor
