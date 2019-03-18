@@ -23,8 +23,12 @@ class ChartView: UIView {
         return colors.randomElement()!.withAlphaComponent(0.05)
     }
     
-    let scrollLayer = ScrollLayer()
     let defaultRange = ChartRange(start: 0, end: 100, scale: 1.0)
+    
+    var maxValue = 0
+    var lineLayers: [LineLayer] {
+        return layer.sublayers?.compactMap { $0 as? LineLayer } ?? []
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -38,19 +42,13 @@ class ChartView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        var f = scrollLayer.frame
-        f.size.height = bounds.size.height
-        f.size.width = max(f.size.width, bounds.size.width)
-        scrollLayer.frame = f
-        scrollLayer.displayPoints(in: defaultRange)
+        print(#function, self)
+        displayPoints(in: defaultRange)
     }
     
     private func internalInit() {
-        scrollLayer.scrollMode = .horizontally
-        layer.addSublayer(scrollLayer)
         // TODO: Theme
         backgroundColor = ChartView.debugColor
-        scrollLayer.backgroundColor = ChartView.debugColor.cgColor
     }
     
     private func convertValueToPoint(value: Int) -> CGPoint {
@@ -59,34 +57,24 @@ class ChartView: UIView {
     
     func addChart(with color: UIColor, values: [Int]) {
         print(#function, color.hexString, "\(values[...3])... count:", values.count)
-        scrollLayer.addLineLayer(with: color, values: values)
+        
+        maxValue = max(maxValue, values.max() ?? 0)
+        
+        let line = LineLayer(color: color.cgColor, values: values, points: points(from: values, for: frame))
+        layer.addSublayer(line)
     }
     
     func set(range: ChartRange, animated: Bool = false) {
-        scrollLayer.displayPoints(in: range, animated: animated)
-    }
-}
-
-class ScrollLayer: CAScrollLayer {
-    var maxValue = 0
-    var lineLayers: [LineLayer] {
-        return sublayers?.compactMap { $0 as? LineLayer } ?? []
+        displayPoints(in: range, animated: animated)
     }
     
-    func addLineLayer(with color: UIColor, values: [Int]) {
-        maxValue = max(maxValue, values.max() ?? 0)
-        
-        let layer = LineLayer(color: color.cgColor, values: values, points: points(from: values, for: frame))
-        addSublayer(layer)
-    }
-    
-    func displayPoints(in range: ChartRange, animated: Bool = false) {
+    private func displayPoints(in range: ChartRange, animated: Bool = false) {
         let width = bounds.width/range.scale
         var f = frame
         f.size.width = width
         let start = width/100*CGFloat(range.start)
         let end = width/100*CGFloat(range.end)
-        let visibleRect = CGRect(x: start, y: frame.minY, width: end-start, height: frame.height)
+        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: frame.height)
         
         lineLayers.forEach {
             $0.points = points(from: $0.values, for: f).compactMap {
@@ -96,15 +84,7 @@ class ScrollLayer: CAScrollLayer {
         }
     }
     
-    func updateSublayers() {
-        lineLayers.forEach {
-            $0.points = points(from: $0.values, for: frame)
-            $0.updatePath(animated: true)
-            $0.backgroundColor = ChartView.debugColor.cgColor
-        }
-    }
-    
-    func points(from values: [Int], for frame: CGRect) -> [CGPoint] {
+    private func points(from values: [Int], for frame: CGRect) -> [CGPoint] {
         let offsetX = frame.size.width/CGFloat(values.count)
         let ratio = frame.height/CGFloat(maxValue)
         return values.enumerated().map { (i, value) -> CGPoint in
