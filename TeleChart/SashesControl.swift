@@ -163,7 +163,8 @@ class SashesControl: UIControl {
                     }
                 }
                 
-                let scale = (rightEdge - leftEdge) / frame.size.width
+                var scale = (rightEdge - leftEdge) / frame.size.width
+                scale = round(scale*100)/100
                 delegate?.sashesControl(self, didChangeChartRange: ChartRange(start: from, end: to, scale: scale))
             }
         case .cancelled, .ended:

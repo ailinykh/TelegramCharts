@@ -27,7 +27,7 @@ class TableViewController: UITableViewController, SashesControlDelegate {
     }
     
     func sashesControl(_ control: SashesControl, didChangeChartRange range: ChartRange) {
-        chartView.set(range: range)
+        chartView.set(range: range, animated: true)
     }
 
     private func reloadData() {

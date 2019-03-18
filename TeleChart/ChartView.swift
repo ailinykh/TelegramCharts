@@ -23,8 +23,8 @@ class ChartView: UIView {
         return colors.randomElement()!.withAlphaComponent(0.05)
     }
     
-//    var canvas = CGRect()
     let scrollLayer = ScrollLayer()
+    let defaultRange = ChartRange(start: 0, end: 100, scale: 1.0)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,7 +42,7 @@ class ChartView: UIView {
         f.size.height = bounds.size.height
         f.size.width = max(f.size.width, bounds.size.width)
         scrollLayer.frame = f
-        scrollLayer.updateSublayers()
+        scrollLayer.displayPoints(in: defaultRange)
     }
     
     private func internalInit() {
@@ -59,22 +59,11 @@ class ChartView: UIView {
     
     func addChart(with color: UIColor, values: [Int]) {
         print(#function, color.hexString, "\(values[...3])... count:", values.count)
-        
         scrollLayer.addLineLayer(with: color, values: values)
-        scrollLayer.updateSublayers()
     }
     
-    var prevRange = ChartRange(start: 0, end: 0, scale: 0)
     func set(range: ChartRange, animated: Bool = false) {
-        let width = bounds.width/range.scale
-        let x = width/100*CGFloat(range.start)
-        
-        var f = scrollLayer.frame
-        f.origin.x = -x
-        f.size.width = width
-        scrollLayer.frame = f
-        scrollLayer.updateSublayers()
-//        print(#function, range, scrollLayer.frame)
+        scrollLayer.displayPoints(in: range, animated: animated)
     }
 }
 
@@ -87,19 +76,35 @@ class ScrollLayer: CAScrollLayer {
     func addLineLayer(with color: UIColor, values: [Int]) {
         maxValue = max(maxValue, values.max() ?? 0)
         
-        let layer = LineLayer(color: color.cgColor, values: values, points: points(from: values))
+        let layer = LineLayer(color: color.cgColor, values: values, points: points(from: values, for: frame))
         addSublayer(layer)
+    }
+    
+    func displayPoints(in range: ChartRange, animated: Bool = false) {
+        let width = bounds.width/range.scale
+        var f = frame
+        f.size.width = width
+        let start = width/100*CGFloat(range.start)
+        let end = width/100*CGFloat(range.end)
+        let visibleRect = CGRect(x: start, y: frame.minY, width: end-start, height: frame.height)
+        
+        lineLayers.forEach {
+            $0.points = points(from: $0.values, for: f).compactMap {
+                visibleRect.contains($0) ? CGPoint(x: $0.x-start, y: $0.y) : nil
+            }
+            $0.updatePath(animated: animated)
+        }
     }
     
     func updateSublayers() {
         lineLayers.forEach {
-            $0.points = points(from: $0.values)
+            $0.points = points(from: $0.values, for: frame)
             $0.updatePath(animated: true)
             $0.backgroundColor = ChartView.debugColor.cgColor
         }
     }
     
-    func points(from values: [Int]) -> [CGPoint] {
+    func points(from values: [Int], for frame: CGRect) -> [CGPoint] {
         let offsetX = frame.size.width/CGFloat(values.count)
         let ratio = frame.height/CGFloat(maxValue)
         return values.enumerated().map { (i, value) -> CGPoint in
@@ -114,6 +119,8 @@ class LineLayer: CAShapeLayer {
     var color: CGColor
     var values: [Int]
     var points: [CGPoint]
+    
+    var deferAnimation = false
     
     init(color: CGColor, values: [Int], points: [CGPoint]) {
         self.color = color
@@ -144,6 +151,14 @@ class LineLayer: CAShapeLayer {
         }
         
         if animated {
+            if let ak = animationKeys(), ak.contains("path") {
+                // animation already in progress
+                deferAnimation = true
+                return
+            }
+            
+            CATransaction.begin()
+            
             let animation = CABasicAnimation(keyPath: "path")
             animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
             animation.fromValue = self.path
@@ -151,6 +166,14 @@ class LineLayer: CAShapeLayer {
             animation.duration = 0.4
             animation.fillMode = CAMediaTimingFillMode.backwards
             add(animation, forKey: "path")
+            
+            CATransaction.setCompletionBlock { [weak self] in
+                if self?.deferAnimation == true {
+                    self?.deferAnimation = false
+                    self?.updatePath(animated: true)
+                }
+            }
+            CATransaction.commit()
         }
         self.path = path.cgPath
     }
