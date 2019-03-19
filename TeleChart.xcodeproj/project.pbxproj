@@ -12,11 +12,12 @@
 		737C014722399C780026D2D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 737C014622399C780026D2D3 /* Assets.xcassets */; };
 		737C014A22399C780026D2D3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 737C014822399C780026D2D3 /* LaunchScreen.storyboard */; };
 		737C015222399CB60026D2D3 /* SashesControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C015122399CB60026D2D3 /* SashesControl.swift */; };
-		737C01552239A1E90026D2D3 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C01542239A1E90026D2D3 /* TableViewController.swift */; };
+		737C01552239A1E90026D2D3 /* ChartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C01542239A1E90026D2D3 /* ChartViewController.swift */; };
 		737C01572239A5EC0026D2D3 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C01562239A5EC0026D2D3 /* ChartView.swift */; };
 		737C01592239A7550026D2D3 /* chart_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 737C01582239A7550026D2D3 /* chart_data.json */; };
 		737C015B2239A7840026D2D3 /* ChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C015A2239A7840026D2D3 /* ChartData.swift */; };
 		737C015D2239A7F60026D2D3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C015C2239A7F60026D2D3 /* Extensions.swift */; };
+		73F333692240D01100E08937 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F333682240D01100E08937 /* TableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,12 +29,13 @@
 		737C014B22399C780026D2D3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		737C015122399CB60026D2D3 /* SashesControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SashesControl.swift; sourceTree = "<group>"; };
 		737C015322399DD60026D2D3 /* TeleChart.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TeleChart.entitlements; sourceTree = "<group>"; };
-		737C01542239A1E90026D2D3 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		737C01542239A1E90026D2D3 /* ChartViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartViewController.swift; sourceTree = "<group>"; };
 		737C01562239A5EC0026D2D3 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		737C01582239A7550026D2D3 /* chart_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = chart_data.json; sourceTree = "<group>"; };
 		737C015A2239A7840026D2D3 /* ChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartData.swift; sourceTree = "<group>"; };
 		737C015C2239A7F60026D2D3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		737C015E2239AC3C0026D2D3 /* ChartPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = ChartPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		73F333682240D01100E08937 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,10 +77,11 @@
 				737C014822399C780026D2D3 /* LaunchScreen.storyboard */,
 				737C014322399C760026D2D3 /* Main.storyboard */,
 				737C015122399CB60026D2D3 /* SashesControl.swift */,
-				737C01542239A1E90026D2D3 /* TableViewController.swift */,
+				737C01542239A1E90026D2D3 /* ChartViewController.swift */,
 				737C01562239A5EC0026D2D3 /* ChartView.swift */,
 				737C015A2239A7840026D2D3 /* ChartData.swift */,
 				737C015C2239A7F60026D2D3 /* Extensions.swift */,
+				73F333682240D01100E08937 /* TableViewController.swift */,
 			);
 			path = TeleChart;
 			sourceTree = "<group>";
@@ -161,10 +164,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				737C014022399C760026D2D3 /* AppDelegate.swift in Sources */,
+				73F333692240D01100E08937 /* TableViewController.swift in Sources */,
 				737C015222399CB60026D2D3 /* SashesControl.swift in Sources */,
 				737C01572239A5EC0026D2D3 /* ChartView.swift in Sources */,
 				737C015B2239A7840026D2D3 /* ChartData.swift in Sources */,
-				737C01552239A1E90026D2D3 /* TableViewController.swift in Sources */,
+				737C01552239A1E90026D2D3 /* ChartViewController.swift in Sources */,
 				737C015D2239A7F60026D2D3 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

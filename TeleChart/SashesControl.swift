@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SashesControlDelegate: AnyObject {
-    func sashesControl(_ control: SashesControl, didChangeChartRange range: ChartRange)
+    func sashesControlDidChangeRange(_ control: SashesControl)
 }
 
 class SashesControl: UIControl {
@@ -23,7 +23,7 @@ class SashesControl: UIControl {
     
     weak var delegate: SashesControlDelegate?
     
-    var range = ChartRange(start: 0, end: 100, scale: 1.0)
+    var range = ChartRange(start: 0, end: 0, scale: 0)
     
     var movingPart = MovingPart.none
     var lastMovedX = CGFloat(0.0)
@@ -49,13 +49,12 @@ class SashesControl: UIControl {
         internalInit()
     }
     
-//    func setSelection(range: ClosedRange<Int>, precision p: CGFloat) {
-//        let mini = max(range.min() ?? 0, 0)
-//        let maxi = min(range.max() ?? 100, 100)
-//        let delta = frame.size.width/100
-//        leftSashConstraint.constant = delta*CGFloat(mini)+leftSash.frame.width
-//        rightSashConstraint.constant = frame.size.width-delta*CGFloat(maxi)+rightSash.frame.width
-//    }
+    func setRange(range: ChartRange) {
+        self.range = range
+        let delta = frame.size.width/100
+        leftSashConstraint.constant = delta*CGFloat(range.start)+leftSash.frame.width
+        rightSashConstraint.constant = frame.size.width-delta*CGFloat(range.end)+rightSash.frame.width
+    }
     
     private func internalInit() {
         backgroundColor = UIColor.clear
@@ -101,6 +100,8 @@ class SashesControl: UIControl {
         
         panGestureRecognizer.addTarget(self, action: #selector(panGestureHandler))
         addGestureRecognizer(panGestureRecognizer)
+        
+        setRange(range: ChartRange(start: 0, end: 100, scale: 1.0))
     }
     
     @objc func panGestureHandler(_ sender: UIPanGestureRecognizer) {
@@ -165,7 +166,8 @@ class SashesControl: UIControl {
                 
                 var scale = (rightEdge - leftEdge) / frame.size.width
                 scale = round(scale*100)/100
-                delegate?.sashesControl(self, didChangeChartRange: ChartRange(start: from, end: to, scale: scale))
+                range = ChartRange(start: from, end: to, scale: scale)
+                delegate?.sashesControlDidChangeRange(self)
             }
         case .cancelled, .ended:
             movingPart = .none

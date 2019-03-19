@@ -42,8 +42,7 @@ class ChartView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        print(#function, self)
-        displayPoints(in: defaultRange)
+        set(range: defaultRange)
     }
     
     private func internalInit() {
@@ -65,21 +64,16 @@ class ChartView: UIView {
     }
     
     func set(range: ChartRange, animated: Bool = false) {
-        displayPoints(in: range, animated: animated)
-    }
-    
-    private func displayPoints(in range: ChartRange, animated: Bool = false) {
+//        print(#function, range)
         let width = bounds.width/range.scale
         var f = frame
         f.size.width = width
         let start = width/100*CGFloat(range.start)
-        let end = width/100*CGFloat(range.end)
-        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: frame.height)
+//        let end = width/100*CGFloat(range.end)
+//        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: frame.height)
         
         lineLayers.forEach {
-            $0.points = points(from: $0.values, for: f).compactMap {
-                visibleRect.contains($0) ? CGPoint(x: $0.x-start, y: $0.y) : nil
-            }
+            $0.points = points(from: $0.values, for: f).map { CGPoint(x: $0.x-start, y: $0.y) }
             $0.updatePath(animated: animated)
         }
     }
@@ -108,6 +102,7 @@ class LineLayer: CAShapeLayer {
         self.points = points
         super.init()
         lineWidth = 2
+        lineJoin = .bevel
         strokeColor = color
         fillColor = UIColor.clear.cgColor
     }
@@ -121,7 +116,7 @@ class LineLayer: CAShapeLayer {
     
     func updatePath(animated: Bool = false) {
 //        print(#function, frame, points[...3])
-        let path = UIBezierPath()
+        let path = CGMutablePath()
         points.enumerated().forEach { i, point in
             if i == 0 {
                 path.move(to: point)
@@ -131,21 +126,22 @@ class LineLayer: CAShapeLayer {
         }
         
         if animated {
-            if let ak = animationKeys(), ak.contains("path") {
-                // animation already in progress
-                deferAnimation = true
-                return
-            }
+            let key = "path"
+//            if let ak = animationKeys(), ak.contains(key) {
+//                // animation already in progress
+//                deferAnimation = true
+//                return
+//            }
             
             CATransaction.begin()
             
-            let animation = CABasicAnimation(keyPath: "path")
-            animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
+            let animation = CABasicAnimation(keyPath: key)
+            animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
             animation.fromValue = self.path
-            animation.toValue = path.cgPath
+            animation.toValue = path
             animation.duration = 0.4
             animation.fillMode = CAMediaTimingFillMode.backwards
-            add(animation, forKey: "path")
+            add(animation, forKey: key)
             
             CATransaction.setCompletionBlock { [weak self] in
                 if self?.deferAnimation == true {
@@ -155,7 +151,7 @@ class LineLayer: CAShapeLayer {
             }
             CATransaction.commit()
         }
-        self.path = path.cgPath
+        self.path = path
     }
     
     required init?(coder aDecoder: NSCoder) {
