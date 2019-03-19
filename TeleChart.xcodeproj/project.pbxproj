@@ -69,19 +69,19 @@
 		737C013E22399C760026D2D3 /* TeleChart */ = {
 			isa = PBXGroup;
 			children = (
-				737C01582239A7550026D2D3 /* chart_data.json */,
-				737C015322399DD60026D2D3 /* TeleChart.entitlements */,
 				737C013F22399C760026D2D3 /* AppDelegate.swift */,
 				737C014622399C780026D2D3 /* Assets.xcassets */,
+				737C01582239A7550026D2D3 /* chart_data.json */,
+				737C015A2239A7840026D2D3 /* ChartData.swift */,
+				737C01562239A5EC0026D2D3 /* ChartView.swift */,
+				737C01542239A1E90026D2D3 /* ChartViewController.swift */,
+				737C015C2239A7F60026D2D3 /* Extensions.swift */,
 				737C014B22399C780026D2D3 /* Info.plist */,
 				737C014822399C780026D2D3 /* LaunchScreen.storyboard */,
 				737C014322399C760026D2D3 /* Main.storyboard */,
 				737C015122399CB60026D2D3 /* SashesControl.swift */,
-				737C01542239A1E90026D2D3 /* ChartViewController.swift */,
-				737C01562239A5EC0026D2D3 /* ChartView.swift */,
-				737C015A2239A7840026D2D3 /* ChartData.swift */,
-				737C015C2239A7F60026D2D3 /* Extensions.swift */,
 				73F333682240D01100E08937 /* TableViewController.swift */,
+				737C015322399DD60026D2D3 /* TeleChart.entitlements */,
 			);
 			path = TeleChart;
 			sourceTree = "<group>";

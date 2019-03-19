@@ -59,7 +59,7 @@ class ChartView: UIView {
         
         maxValue = max(maxValue, values.max() ?? 0)
         
-        let line = LineLayer(color: color.cgColor, values: values, points: points(from: values, for: frame))
+        let line = LineLayer(color: color.cgColor, values: values, points: points(from: values, for: frame, fit: frame))
         layer.addSublayer(line)
     }
     
@@ -69,21 +69,37 @@ class ChartView: UIView {
         var f = frame
         f.size.width = width
         let start = width/100*CGFloat(range.start)
-//        let end = width/100*CGFloat(range.end)
-//        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: frame.height)
+        let end = width/100*CGFloat(range.end)
+        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: frame.height)
         
         lineLayers.forEach {
-            $0.points = points(from: $0.values, for: f).map { CGPoint(x: $0.x-start, y: $0.y) }
+            $0.points = points(from: $0.values, for: f, fit: visibleRect).map {
+                CGPoint(x: $0.x-start, y: $0.y)
+                
+            }
             $0.updatePath(animated: animated)
         }
     }
     
-    private func points(from values: [Int], for frame: CGRect) -> [CGPoint] {
+    private func points(from values: [Int], for frame: CGRect, fit: CGRect) -> [CGPoint] {
+        // calculate X
         let offsetX = frame.size.width/CGFloat(values.count)
-        let ratio = frame.height/CGFloat(maxValue)
-        return values.enumerated().map { (i, value) -> CGPoint in
-            let x = offsetX * CGFloat(i)
-            let y = frame.size.height - ratio * CGFloat(value)
+        var visible = [Int]()
+        let points = values.enumerated().map { (i, value) -> CGPoint in
+            let p = CGPoint(x: offsetX * CGFloat(i), y: 0)
+            if fit.contains(p) {
+                visible.append(value)
+            }
+            return p
+        }
+        // calculate Y
+        let minV = visible.min() ?? 0
+        let maxV = visible.max() ?? 0
+        let ratio = frame.height/CGFloat(maxV-minV)
+        
+        return points.enumerated().map {(i, point) -> CGPoint in
+            let x = point.x
+            let y = frame.size.height - ratio * CGFloat(values[i]-minV)
             return CGPoint(x: x, y: y)
         }
     }
