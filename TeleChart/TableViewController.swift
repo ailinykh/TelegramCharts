@@ -12,6 +12,15 @@ class TableViewController: UITableViewController {
 
     let chartData = DataLoader.getData()
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Show first chart immediately on app launch
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.tableView.selectRow(at: IndexPath(row: 0, section: 0), animated: false, scrollPosition: .none)
+            self.performSegue(withIdentifier: "ChartViewControllerSegueIdentifier", sender: nil)
+        }
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard
             let vc = segue.destination as? ChartViewController,

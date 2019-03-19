@@ -26,7 +26,6 @@ class SashesControl: UIControl {
     var range = ChartRange(start: 0, end: 0, scale: 0)
     
     var movingPart = MovingPart.none
-    var lastMovedX = CGFloat(0.0)
     
     let leftOverlay = SashOverlay()
     let rightOverlay = SashOverlay()
@@ -36,8 +35,6 @@ class SashesControl: UIControl {
     
     var leftSashConstraint: NSLayoutConstraint!
     var rightSashConstraint: NSLayoutConstraint!
-    
-    let panGestureRecognizer = UIPanGestureRecognizer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,6 +60,9 @@ class SashesControl: UIControl {
         rightOverlay.frame = CGRect(x: bounds.size.width-16, y: 0, width: 16, height: bounds.size.height)
         leftSash.frame = leftOverlay.frame
         rightSash.frame = rightOverlay.frame
+        
+        leftSash.isUserInteractionEnabled = false
+        rightSash.isUserInteractionEnabled = false
         
         addSubview(leftOverlay)
         addSubview(rightOverlay)
@@ -98,84 +98,70 @@ class SashesControl: UIControl {
         assert(leftSashConstraint != nil, "Left overlay width constraint not found!")
         assert(rightSashConstraint != nil, "Right overlay width constraint not found!")
         
-        panGestureRecognizer.addTarget(self, action: #selector(panGestureHandler))
-        addGestureRecognizer(panGestureRecognizer)
-        
         setRange(range: ChartRange(start: 0, end: 100, scale: 1.0))
     }
     
-    @objc func panGestureHandler(_ sender: UIPanGestureRecognizer) {
-        let location = sender.location(in: self)
-        let pointLeft = sender.location(in: leftSash)
-        let pointRight = sender.location(in: rightSash)
-        
-        switch sender.state {
-        case .began:
-            if abs(pointLeft.x) < abs(pointRight.x) && abs(pointLeft.x) < leftSash.frame.size.width*2 {
-                movingPart = .left
-            }
-            else if abs(pointLeft.x) > abs(pointRight.x) && abs(pointRight.x) < rightSash.frame.size.width {
-                movingPart = .right
-            }
-            else if pointLeft.x > 0 && pointRight.x < 0 {
-                movingPart = .center
-            } else {
-                movingPart = .none
-            }
-        case .changed:
-            switch movingPart {
-            case .left:
-                let minimum = leftSash.frame.size.width
-                let maximum = bounds.size.width - rightSashConstraint.constant
-                leftSashConstraint.constant = min(max(minimum, location.x + leftSash.frame.size.width/2), maximum)
-            case .right:
-                let minimum = rightSash.frame.size.width
-                let maximum = bounds.size.width - leftSashConstraint.constant
-                rightSashConstraint.constant = min(max(minimum, bounds.size.width - (location.x - rightSash.frame.size.width/2)), maximum)
-            case .center:
-                if lastMovedX == 0 {
-                    break
-                }
-                let delta = lastMovedX - location.x
-                if leftSashConstraint.constant - delta > leftSash.frame.size.width && rightSashConstraint.constant + delta > rightSash.frame.size.width {
-                    leftSashConstraint.constant -= delta
-                    rightSashConstraint.constant += delta
-                }
-            default:
-                break
-            }
-            
-            if movingPart != .none {
-                let leftEdge = leftOverlay.frame.origin.x + leftOverlay.frame.size.width - leftSash.frame.size.width
-                let rightEdge = rightOverlay.frame.origin.x + rightSash.frame.size.width
-                var from = Int(100*leftEdge/bounds.size.width)
-                var to = Int(100*rightEdge/bounds.size.width)
-                
-                // ensure range size didn't changed
-                if movingPart == .center {
-                    let delta = range.end - range.start - (to - from)
-                    if delta != 0 {
-//                            print(#function, "⚠️ Got precision error", delta, "from:", from, "to:", to)
-                        if to < 100 {
-                            to += delta
-                        } else if from > 0 {
-                            from -= delta
-                        }
-                    }
-                }
-                
-                var scale = (rightEdge - leftEdge) / frame.size.width
-                scale = round(scale*100)/100
-                range = ChartRange(start: from, end: to, scale: scale)
-                delegate?.sashesControlDidChangeRange(self)
-            }
-        case .cancelled, .ended:
-            movingPart = .none
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        print(#function, touches, event)
+        switch touches.first?.view {
+        case leftOverlay:
+            movingPart = .left
+        case rightOverlay:
+            movingPart = .right
+        case self:
+            movingPart = .center
         default:
-            print(sender.state.rawValue)
+            movingPart = .none
+        }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first  else { return }
+        let location = touch.location(in: self)
+        let prevLocation = touch.previousLocation(in: self)
+        switch movingPart {
+        case .left:
+            let minimum = leftSash.frame.size.width
+            let maximum = bounds.size.width - rightSashConstraint.constant
+            leftSashConstraint.constant = min(max(minimum, location.x + leftSash.frame.size.width/2), maximum)
+        case .right:
+            let minimum = rightSash.frame.size.width
+            let maximum = bounds.size.width - leftSashConstraint.constant
+            rightSashConstraint.constant = min(max(minimum, bounds.size.width - (location.x - rightSash.frame.size.width/2)), maximum)
+        case .center:
+            let delta = prevLocation.x - location.x
+            if leftSashConstraint.constant - delta > leftSash.frame.size.width && rightSashConstraint.constant + delta > rightSash.frame.size.width {
+                leftSashConstraint.constant -= delta
+                rightSashConstraint.constant += delta
+            }
+        default:
             break
         }
-        lastMovedX = location.x
+        
+        if movingPart != .none {
+            let leftEdge = leftOverlay.frame.origin.x + leftOverlay.frame.size.width - leftSash.frame.size.width
+            let rightEdge = rightOverlay.frame.origin.x + rightSash.frame.size.width
+            var from = Int(100*leftEdge/bounds.size.width)
+            var to = Int(100*rightEdge/bounds.size.width)
+            
+            // ensure range size didn't changed
+            if movingPart == .center {
+                let delta = range.end - range.start - (to - from)
+                if delta != 0 {
+//                    print(#function, "⚠️ Got precision error", delta, "from:", from, "to:", to)
+                    if to < 100 {
+                        to += delta
+                    } else if from > 0 {
+                        from -= delta
+                    }
+                }
+            }
+            
+            var scale = (rightEdge - leftEdge) / frame.size.width
+            scale = round(scale*100)/100
+            range = ChartRange(start: from, end: to, scale: scale)
+            delegate?.sashesControlDidChangeRange(self)
+        }
     }
 }
 

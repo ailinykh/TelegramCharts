@@ -162,7 +162,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="bX8-YE-7OK" kind="show" id="CQn-nM-QxJ"/>
+                                    <segue destination="bX8-YE-7OK" kind="show" identifier="ChartViewControllerSegueIdentifier" id="CQn-nM-QxJ"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
