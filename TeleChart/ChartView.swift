@@ -25,7 +25,6 @@ class ChartView: UIView {
     
     let defaultRange = ChartRange(start: 0, end: 100, scale: 1.0)
     
-    var maxValue = 0
     var lineLayers: [LineLayer] {
         return layer.sublayers?.compactMap { $0 as? LineLayer } ?? []
     }
@@ -55,11 +54,9 @@ class ChartView: UIView {
     }
     
     func addChart(with color: UIColor, values: [Int]) {
-        print(#function, color.hexString, "\(values[...3])... count:", values.count)
-        
-        maxValue = max(maxValue, values.max() ?? 0)
-        
-        let line = LineLayer(color: color.cgColor, values: values, points: points(from: values, for: frame, fit: frame))
+//        print(#function, color.hexString, "\(values[...3])... count:", values.count)
+        let pts = points(from: values, for: frame, fit: frame)
+        let line = LineLayer(color: color.cgColor, values: values, points: pts)
         layer.addSublayer(line)
     }
     
@@ -70,7 +67,7 @@ class ChartView: UIView {
         f.size.width = width
         let start = width/100*CGFloat(range.start)
         let end = width/100*CGFloat(range.end)
-        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: frame.height)
+        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: f.height)
         
         lineLayers.forEach {
             $0.points = points(from: $0.values, for: f, fit: visibleRect).map {
