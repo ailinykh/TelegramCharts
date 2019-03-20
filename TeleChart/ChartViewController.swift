@@ -25,7 +25,10 @@ class ChartViewController: UITableViewController, SashesControlDelegate {
         
         if let chartData = chartData {
             chartData.columns.forEach {
-                if $0.key.starts(with: "y") {
+                if $0.key == "x" {
+                    chartView.addX(values: $0.value)
+                }
+                else if $0.key.starts(with: "y") {
                     let hex = chartData.colors[$0.key]!
                     let color = UIColor(hexString: hex)
                     
