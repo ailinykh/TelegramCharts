@@ -8,17 +8,15 @@
 
 import UIKit
 
-class LineLayer: CAShapeLayer {
+class LineLayer: CAShapeLayer, Chartable {
     var color: CGColor
     var values: [Int]
-    var points: [CGPoint]
     
     var deferAnimation = false
     
-    init(color: CGColor, values: [Int], points: [CGPoint]) {
+    init(color: CGColor, values: [Int]) {
         self.color = color
         self.values = values
-        self.points = points
         super.init()
         lineWidth = 2
         lineJoin = .bevel
@@ -29,12 +27,38 @@ class LineLayer: CAShapeLayer {
     override init(layer: Any) {
         self.color = (layer as! LineLayer).color
         self.values = (layer as! LineLayer).values
-        self.points = (layer as! LineLayer).points
         super.init(layer: layer)
     }
     
-    func updatePath(animated: Bool = false) {
-        //        print(#function, frame, points[...3])
+    func fit(theFrame: CGRect, theBounds: CGRect) {
+        // calculate X
+        let offsetX = theFrame.size.width/CGFloat(values.count)
+        var visible = [Int]()
+        var points = values.enumerated().map { (i, value) -> CGPoint in
+            let p = CGPoint(x: offsetX * CGFloat(i), y: theBounds.minY)
+            if theBounds.contains(p) {
+                visible.append(value)
+            }
+            return p
+        }
+        // calculate Y
+        let minV = visible.min() ?? 0
+        let maxV = visible.max() ?? 1
+        let ratio = theFrame.height/CGFloat(maxV-minV)
+        
+        points = points.enumerated().map {(i, point) -> CGPoint in
+            let x = point.x
+            let y = bounds.minY + theFrame.size.height - ratio * CGFloat(values[i]-minV)
+            return CGPoint(x: x, y: y)
+        }
+        if frame.height == 48.0 {
+            print(visible[...3], points[...10], frame)
+        }
+        updatePath(points: points)
+    }
+    
+    private func updatePath(points: [CGPoint], animated: Bool = false) {
+//        print(#function, self, frame, points[...3])
         let path = CGMutablePath()
         points.enumerated().forEach { i, point in
             if i == 0 {
@@ -65,7 +89,7 @@ class LineLayer: CAShapeLayer {
             CATransaction.setCompletionBlock { [weak self] in
                 if self?.deferAnimation == true {
                     self?.deferAnimation = false
-                    self?.updatePath(animated: true)
+                    self?.updatePath(points: points, animated: true)
                 }
             }
             CATransaction.commit()

@@ -20,6 +20,7 @@
 		73A1466A2242333500BA7143 /* LineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A146692242333500BA7143 /* LineLayer.swift */; };
 		73A1466E2242338300BA7143 /* AxisXLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A1466D2242338300BA7143 /* AxisXLayer.swift */; };
 		73A146702242339100BA7143 /* AxisYLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A1466F2242339100BA7143 /* AxisYLayer.swift */; };
+		73DD97B022442911000F3ADE /* Chartable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD97AF22442911000F3ADE /* Chartable.swift */; };
 		73F333692240D01100E08937 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F333682240D01100E08937 /* TableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +41,7 @@
 		73A146692242333500BA7143 /* LineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineLayer.swift; sourceTree = "<group>"; };
 		73A1466D2242338300BA7143 /* AxisXLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisXLayer.swift; sourceTree = "<group>"; };
 		73A1466F2242339100BA7143 /* AxisYLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisYLayer.swift; sourceTree = "<group>"; };
+		73DD97AF22442911000F3ADE /* Chartable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chartable.swift; sourceTree = "<group>"; };
 		73F333682240D01100E08937 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,14 +75,13 @@
 		737C013E22399C760026D2D3 /* TeleChart */ = {
 			isa = PBXGroup;
 			children = (
+				73DD97B122442B0A000F3ADE /* Protocols */,
+				73DD97B222442B11000F3ADE /* Layers */,
 				737C013F22399C760026D2D3 /* AppDelegate.swift */,
 				737C014622399C780026D2D3 /* Assets.xcassets */,
 				737C01582239A7550026D2D3 /* chart_data.json */,
 				737C015A2239A7840026D2D3 /* ChartData.swift */,
 				737C01562239A5EC0026D2D3 /* ChartView.swift */,
-				73A1466D2242338300BA7143 /* AxisXLayer.swift */,
-				73A1466F2242339100BA7143 /* AxisYLayer.swift */,
-				73A146692242333500BA7143 /* LineLayer.swift */,
 				737C01542239A1E90026D2D3 /* ChartViewController.swift */,
 				737C015C2239A7F60026D2D3 /* Extensions.swift */,
 				737C014B22399C780026D2D3 /* Info.plist */,
@@ -91,6 +92,24 @@
 				737C015322399DD60026D2D3 /* TeleChart.entitlements */,
 			);
 			path = TeleChart;
+			sourceTree = "<group>";
+		};
+		73DD97B122442B0A000F3ADE /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				73DD97AF22442911000F3ADE /* Chartable.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		73DD97B222442B11000F3ADE /* Layers */ = {
+			isa = PBXGroup;
+			children = (
+				73A1466D2242338300BA7143 /* AxisXLayer.swift */,
+				73A1466F2242339100BA7143 /* AxisYLayer.swift */,
+				73A146692242333500BA7143 /* LineLayer.swift */,
+			);
+			path = Layers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -171,6 +190,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				737C014022399C760026D2D3 /* AppDelegate.swift in Sources */,
+				73DD97B022442911000F3ADE /* Chartable.swift in Sources */,
 				73F333692240D01100E08937 /* TableViewController.swift in Sources */,
 				737C015222399CB60026D2D3 /* SashesControl.swift in Sources */,
 				737C01572239A5EC0026D2D3 /* ChartView.swift in Sources */,

@@ -22,6 +22,7 @@ class ChartViewController: UITableViewController, SashesControlDelegate {
         navigationController?.interactivePopGestureRecognizer?.isEnabled = false
         chartCell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: UIScreen.main.bounds.width)
         sashesControl.delegate = self
+        miniChartView.type = .mini
         
         if let chartData = chartData {
             chartData.columns.forEach {

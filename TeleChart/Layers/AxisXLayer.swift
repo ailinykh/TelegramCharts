@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AxisXLayer: CAShapeLayer {
+class AxisXLayer: CAShapeLayer, Chartable {
 
     var values: [Int]
     
@@ -21,20 +21,20 @@ class AxisXLayer: CAShapeLayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func set(frame: CGRect, fit: CGRect) {
+    func fit(theFrame: CGRect, theBounds: CGRect) {
         let strings = values.map { time -> String in
             let date = Date(timeIntervalSince1970: Double(time/1000))
             let df = DateFormatter()
             df.dateFormat = "MMM dd"
             return df.string(from: date)
         }
-        let offsetX = frame.size.width/CGFloat(values.count)
+        let offsetX = theFrame.size.width/CGFloat(values.count)
         
         guard values.count > 0 else {
             return
         }
-        let startIdx = (fit.minX/offsetX).rounded()
-        let endIdx = (fit.maxX/offsetX).rounded()
+        let startIdx = (theBounds.minX/offsetX).rounded()
+        let endIdx = (theBounds.maxX/offsetX).rounded()
         let some = Array(strings[Int(startIdx)..<Int(endIdx)]).someOf()
         
         // TODO: Consider using CAReplicatorLayer here
@@ -42,7 +42,7 @@ class AxisXLayer: CAShapeLayer {
         sublayers?.forEach { $0.removeFromSuperlayer() }
         
         var f = CGRect(x: 0, y: 0, width: 50, height: 15)
-        f.origin = fit.origin
+        f.origin = theBounds.origin
         
         some.forEach {
             let textLayer = CATextLayer()

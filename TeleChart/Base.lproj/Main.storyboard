@@ -35,7 +35,7 @@
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </view>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="khf-ta-5zB" customClass="ChartView" customModule="TeleChart" customModuleProvider="target">
-                                                            <rect key="frame" x="0.0" y="315" width="375" height="56"/>
+                                                            <rect key="frame" x="0.0" y="319" width="375" height="48"/>
                                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </view>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5f0-go-5PG" customClass="SashesControl" customModule="TeleChart" customModuleProvider="target">
@@ -52,13 +52,13 @@
                                                         <constraint firstAttribute="trailing" secondItem="5f0-go-5PG" secondAttribute="trailing" id="5HR-Hx-ZTD"/>
                                                         <constraint firstItem="Jn5-R1-KeI" firstAttribute="leading" secondItem="wrl-Av-hDc" secondAttribute="leading" id="AUs-47-deb"/>
                                                         <constraint firstItem="5f0-go-5PG" firstAttribute="leading" secondItem="wrl-Av-hDc" secondAttribute="leading" id="M4X-Pb-u8d"/>
-                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="bottom" secondItem="khf-ta-5zB" secondAttribute="bottom" constant="4" id="PLe-yu-0QV"/>
+                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="bottom" secondItem="khf-ta-5zB" secondAttribute="bottom" constant="8" id="PLe-yu-0QV"/>
                                                         <constraint firstAttribute="width" secondItem="wrl-Av-hDc" secondAttribute="height" multiplier="1:1" id="WQb-Si-ws8"/>
                                                         <constraint firstItem="5f0-go-5PG" firstAttribute="top" secondItem="Jn5-R1-KeI" secondAttribute="bottom" id="ZKN-j4-bTL"/>
                                                         <constraint firstAttribute="trailing" secondItem="Jn5-R1-KeI" secondAttribute="trailing" id="i6H-xk-jEc"/>
                                                         <constraint firstAttribute="bottom" secondItem="5f0-go-5PG" secondAttribute="bottom" id="lAI-Dp-KJE"/>
                                                         <constraint firstItem="5f0-go-5PG" firstAttribute="trailing" secondItem="khf-ta-5zB" secondAttribute="trailing" id="rXC-VX-gCB"/>
-                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="top" secondItem="khf-ta-5zB" secondAttribute="top" constant="-4" id="smk-dW-2Gk"/>
+                                                        <constraint firstItem="5f0-go-5PG" firstAttribute="top" secondItem="khf-ta-5zB" secondAttribute="top" constant="-8" id="smk-dW-2Gk"/>
                                                         <constraint firstItem="Jn5-R1-KeI" firstAttribute="top" secondItem="wrl-Av-hDc" secondAttribute="top" id="zhz-jI-YRM"/>
                                                     </constraints>
                                                 </view>
@@ -174,7 +174,7 @@
                     <navigationItem key="navigationItem" id="b0A-Yx-jgv"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Q8u-nm-xrk" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <navigationItem title="Chart List" id="SxM-Cs-FNh"/>
+                <navigationItem title="Charts" id="SxM-Cs-FNh"/>
             </objects>
             <point key="canvasLocation" x="526" y="616"/>
         </scene>

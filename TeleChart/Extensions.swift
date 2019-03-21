@@ -36,3 +36,9 @@ extension UIColor {
         return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
     }
 }
+
+extension CGFloat {
+    func rounded02() -> CGFloat {
+        return (self*100).rounded()/100
+    }
+}

@@ -16,6 +16,13 @@ struct ChartRange {
 
 class ChartView: UIView {
     
+    enum ChartType {
+        case normal
+        case mini
+    }
+    
+    var type = ChartType.normal
+    
     static let debug = true
     static let debugColorBlack = UIColor.black.withAlphaComponent(0.3)
     static var debugColor: UIColor {
@@ -29,8 +36,15 @@ class ChartView: UIView {
         return layer.sublayers?.compactMap { $0 as? LineLayer } ?? []
     }
     
-    var xLayer: AxisXLayer {
-        return layer.sublayers?.compactMap { $0 as? AxisXLayer }.first ?? AxisXLayer(values: [])
+    var lineLayerFrame: CGRect {
+        if type == .mini {
+            return bounds
+        }
+        return CGRect(x: frame.minX, y: frame.minY+15, width: frame.width, height: frame.height+100)
+    }
+    
+    var xLayer: AxisXLayer? {
+        return layer.sublayers?.compactMap { $0 as? AxisXLayer }.first
     }
     
     override init(frame: CGRect) {
@@ -45,6 +59,18 @@ class ChartView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
+        var f = frame
+        f.origin.y = f.maxY - 15.0
+        f.size.height = 15.0
+        xLayer?.frame = f
+        
+        lineLayers.forEach { $0.frame = lineLayerFrame }
+        print(layer.frame)
+        layer.sublayers?.forEach {
+            print("sublayers:", $0, $0.frame, bounds)
+        }
+        
         set(range: defaultRange)
     }
     
@@ -59,8 +85,7 @@ class ChartView: UIView {
     
     func addChart(with color: UIColor, values: [Int]) {
 //        print(#function, color.hexString, "\(values[...3])... count:", values.count)
-        let pts = points(from: values, for: frame, fit: frame)
-        let line = LineLayer(color: color.cgColor, values: values, points: pts)
+        let line = LineLayer(color: color.cgColor, values: values)
         layer.addSublayer(line)
     }
     
@@ -71,43 +96,29 @@ class ChartView: UIView {
     
     func set(range: ChartRange, animated: Bool = false) {
 //        print(#function, range)
-        let width = bounds.width/range.scale
-        var f = frame
-        f.size.width = width
-        let start = width/100*CGFloat(range.start)
-        let end = width/100*CGFloat(range.end)
-        let visibleRect = CGRect(x: start, y: 0, width: end-start, height: f.height)
         
-        lineLayers.forEach {
-            $0.points = points(from: $0.values, for: f, fit: visibleRect).map {
-                CGPoint(x: $0.x-start, y: $0.y)
+        var f = lineLayerFrame
+        f.size.width = (f.width/range.scale).rounded02()
+        let start = f.width/100*CGFloat(range.start)
+        let end = f.width/100*CGFloat(range.end)
+        let width = end-start
+        let visibleRect = CGRect(x: start.rounded02(), y: f.minY, width: width.rounded02(), height: f.height)
+        
+        layer.sublayers?.forEach {
+            if let layer = $0 as? Chartable {
+                print(layer, f, visibleRect)
+                layer.fit(theFrame: f, theBounds: visibleRect)
             }
-            $0.updatePath(animated: animated)
         }
-        
-        xLayer.set(frame: f, fit: visibleRect)
+//        lineLayers.forEach {
+//            $0.points = points(from: $0.values, for: f, fit: visibleRect).map {
+//                CGPoint(x: $0.x-start, y: $0.y)
+//            }
+//            $0.updatePath(animated: animated)
+//        }
+//
+//        xLayer.set(frame: f, fit: visibleRect)
     }
     
-    private func points(from values: [Int], for frame: CGRect, fit: CGRect) -> [CGPoint] {
-        // calculate X
-        let offsetX = frame.size.width/CGFloat(values.count)
-        var visible = [Int]()
-        let points = values.enumerated().map { (i, value) -> CGPoint in
-            let p = CGPoint(x: offsetX * CGFloat(i), y: 0)
-            if fit.contains(p) {
-                visible.append(value)
-            }
-            return p
-        }
-        // calculate Y
-        let minV = visible.min() ?? 0
-        let maxV = visible.max() ?? 0
-        let ratio = frame.height/CGFloat(maxV-minV)
-        
-        return points.enumerated().map {(i, point) -> CGPoint in
-            let x = point.x
-            let y = frame.size.height - ratio * CGFloat(values[i]-minV)
-            return CGPoint(x: x, y: y)
-        }
-    }
+    
 }
