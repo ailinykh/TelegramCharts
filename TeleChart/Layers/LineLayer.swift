@@ -12,8 +12,6 @@ class LineLayer: CAShapeLayer, Chartable {
     var color: CGColor
     var values: [Int]
     
-    var deferAnimation = false
-    
     init(color: CGColor, values: [Int]) {
         self.color = color
         self.values = values
@@ -47,14 +45,11 @@ class LineLayer: CAShapeLayer, Chartable {
         let ratio = theFrame.height/CGFloat(maxV-minV)
         
         points = points.enumerated().map {(i, point) -> CGPoint in
-            let x = point.x
+            let x = point.x - theBounds.minX
             let y = bounds.minY + theFrame.size.height - ratio * CGFloat(values[i]-minV)
-            return CGPoint(x: x, y: y)
+            return CGPoint(x: x.rounded02(), y: y.rounded02())
         }
-        if frame.height == 48.0 {
-            print(visible[...3], points[...10], frame)
-        }
-        updatePath(points: points)
+        updatePath(points: points, animated: true)
     }
     
     private func updatePath(points: [CGPoint], animated: Bool = false) {
@@ -69,30 +64,18 @@ class LineLayer: CAShapeLayer, Chartable {
         }
         
         if animated {
-            let key = "path"
-            //            if let ak = animationKeys(), ak.contains(key) {
-            //                // animation already in progress
-            //                deferAnimation = true
-            //                return
-            //            }
+            if let _ = self.animation(forKey: "line"), let presentation = presentation() {
+                removeAnimation(forKey: "line")
+                self.path = presentation.path
+            }
             
-            CATransaction.begin()
-            
-            let animation = CABasicAnimation(keyPath: key)
-            animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            let animation = CABasicAnimation(keyPath: "path")
+            animation.timingFunction = CAMediaTimingFunction(name: .linear)
             animation.fromValue = self.path
             animation.toValue = path
-            animation.duration = 0.4
+            animation.duration = 0.1
             animation.fillMode = CAMediaTimingFillMode.backwards
-            add(animation, forKey: key)
-            
-            CATransaction.setCompletionBlock { [weak self] in
-                if self?.deferAnimation == true {
-                    self?.deferAnimation = false
-                    self?.updatePath(points: points, animated: true)
-                }
-            }
-            CATransaction.commit()
+            add(animation, forKey: "line")
         }
         self.path = path
     }

@@ -8,20 +8,13 @@
 
 import UIKit
 
-struct ChartRange {
+struct ChartRange: Equatable {
     let start: Int
     let end: Int
     let scale: CGFloat
 }
 
 class ChartView: UIView {
-    
-    enum ChartType {
-        case normal
-        case mini
-    }
-    
-    var type = ChartType.normal
     
     static let debug = true
     static let debugColorBlack = UIColor.black.withAlphaComponent(0.3)
@@ -31,16 +24,15 @@ class ChartView: UIView {
     }
     
     let defaultRange = ChartRange(start: 0, end: 100, scale: 1.0)
+    var currentRange = ChartRange(start: 0, end: 0, scale: 0.0)
     
     var lineLayers: [LineLayer] {
         return layer.sublayers?.compactMap { $0 as? LineLayer } ?? []
     }
     
     var lineLayerFrame: CGRect {
-        if type == .mini {
-            return bounds
-        }
-        return CGRect(x: frame.minX, y: frame.minY+15, width: frame.width, height: frame.height+100)
+        return bounds
+//        return CGRect(x: frame.minX, y: frame.minY+15, width: frame.width, height: frame.height+100)
     }
     
     var xLayer: AxisXLayer? {
@@ -94,8 +86,14 @@ class ChartView: UIView {
         layer.addSublayer(xLayer)
     }
     
+    
     func set(range: ChartRange, animated: Bool = false) {
 //        print(#function, range)
+        if currentRange == range {
+//            print("That range already fitted, skipping...", currentRange, range)
+            return
+        }
+        currentRange = range
         
         var f = lineLayerFrame
         f.size.width = (f.width/range.scale).rounded02()
@@ -106,7 +104,7 @@ class ChartView: UIView {
         
         layer.sublayers?.forEach {
             if let layer = $0 as? Chartable {
-                print(layer, f, visibleRect)
+//                print(#function, layer, f, visibleRect)
                 layer.fit(theFrame: f, theBounds: visibleRect)
             }
         }

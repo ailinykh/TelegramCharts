@@ -9,6 +9,8 @@
 import UIKit
 
 protocol SashesControlDelegate: AnyObject {
+    func sashesControlDidStartDragging(_ control: SashesControl)
+    func sashesControlDidEndDragging(_ control: SashesControl)
     func sashesControlDidChangeRange(_ control: SashesControl)
 }
 
@@ -103,6 +105,8 @@ class SashesControl: UIControl {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        print(#function, touches, event)
+        delegate?.sashesControlDidStartDragging(self)
+        
         switch touches.first?.view {
         case leftOverlay:
             movingPart = .left
@@ -162,6 +166,10 @@ class SashesControl: UIControl {
             range = ChartRange(start: from, end: to, scale: scale)
             delegate?.sashesControlDidChangeRange(self)
         }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        delegate?.sashesControlDidEndDragging(self)
     }
 }
 
