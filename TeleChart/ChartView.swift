@@ -24,7 +24,6 @@ class ChartView: UIView {
     }
     
     let defaultRange = ChartRange(start: 0, end: 100, scale: 1.0)
-    var currentRange = ChartRange(start: 0, end: 0, scale: 0.0)
     
     var lineLayers: [LineLayer] {
         return layer.sublayers?.compactMap { $0 as? LineLayer } ?? []
@@ -58,10 +57,6 @@ class ChartView: UIView {
         xLayer?.frame = f
         
         lineLayers.forEach { $0.frame = lineLayerFrame }
-        print(layer.frame)
-        layer.sublayers?.forEach {
-            print("sublayers:", $0, $0.frame, bounds)
-        }
         
         set(range: defaultRange)
     }
@@ -88,13 +83,6 @@ class ChartView: UIView {
     
     
     func set(range: ChartRange, animated: Bool = false) {
-//        print(#function, range)
-        if currentRange == range {
-//            print("That range already fitted, skipping...", currentRange, range)
-            return
-        }
-        currentRange = range
-        
         var f = lineLayerFrame
         f.size.width = (f.width/range.scale).rounded02()
         let start = f.width/100*CGFloat(range.start)
@@ -108,14 +96,6 @@ class ChartView: UIView {
                 layer.fit(theFrame: f, theBounds: visibleRect)
             }
         }
-//        lineLayers.forEach {
-//            $0.points = points(from: $0.values, for: f, fit: visibleRect).map {
-//                CGPoint(x: $0.x-start, y: $0.y)
-//            }
-//            $0.updatePath(animated: animated)
-//        }
-//
-//        xLayer.set(frame: f, fit: visibleRect)
     }
     
     
