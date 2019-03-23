@@ -29,7 +29,10 @@ class ChartView: UIView {
         return layer.sublayers?.compactMap { $0 as? LineLayer } ?? []
     }
     
-    var lineLayerFrame: CGRect {
+    var canvas: CGRect {
+        if xLayer != nil {
+            return CGRect(x: bounds.minX, y: bounds.minY+5.0, width: bounds.width, height: bounds.height-20.0)
+        }
         return bounds
 //        return CGRect(x: frame.minX, y: frame.minY+15, width: frame.width, height: frame.height+100)
     }
@@ -56,14 +59,14 @@ class ChartView: UIView {
         f.size.height = 15.0
         xLayer?.frame = f
         
-        lineLayers.forEach { $0.frame = lineLayerFrame }
+        lineLayers.forEach { $0.frame = canvas }
         
         set(range: defaultRange)
     }
     
     private func internalInit() {
         // TODO: Theme
-        backgroundColor = ChartView.debugColor
+//        backgroundColor = ChartView.debugColor
     }
     
     private func convertValueToPoint(value: Int) -> CGPoint {
@@ -83,7 +86,7 @@ class ChartView: UIView {
     
     
     func set(range: ChartRange, animated: Bool = false) {
-        var f = lineLayerFrame
+        var f = canvas
         f.size.width = (f.width/range.scale).rounded02()
         let start = f.width/100*CGFloat(range.start)
         let end = f.width/100*CGFloat(range.end)

@@ -22,6 +22,11 @@ class AxisXLayer: CAShapeLayer, Chartable {
     }
     
     func fit(theFrame: CGRect, theBounds: CGRect) {
+        guard values.count > 0 else {
+            print(#function, self, "no values")
+            return
+        }
+        
         let strings = values.map { time -> String in
             let date = Date(timeIntervalSince1970: Double(time/1000))
             let df = DateFormatter()
@@ -30,9 +35,6 @@ class AxisXLayer: CAShapeLayer, Chartable {
         }
         let offsetX = theFrame.size.width/CGFloat(values.count)
         
-        guard values.count > 0 else {
-            return
-        }
         let startIdx = (theBounds.minX/offsetX).rounded()
         let endIdx = (theBounds.maxX/offsetX).rounded()
         let some = Array(strings[Int(startIdx)..<Int(endIdx)]).someOf()
@@ -42,17 +44,18 @@ class AxisXLayer: CAShapeLayer, Chartable {
         sublayers?.forEach { $0.removeFromSuperlayer() }
         
         var f = CGRect(x: 0, y: 0, width: 50, height: 15)
-        f.origin = theBounds.origin
+        let textOffsetX = theBounds.width / CGFloat(some.count)
         
         some.forEach {
             let textLayer = CATextLayer()
             textLayer.frame = f
             textLayer.backgroundColor = UIColor.black.cgColor
+//            textLayer.foregroundColor = UIColor.gray.cgColor
             textLayer.fontSize = UIFont.smallSystemFontSize
             textLayer.string = $0
             textLayer.alignmentMode = .center
             addSublayer(textLayer)
-            f.origin.x += 80.0
+            f.origin.x += textOffsetX
         }
     }
 }
