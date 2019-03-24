@@ -29,27 +29,29 @@ class LineLayer: CAShapeLayer, Chartable {
     }
     
     func fit(theFrame: CGRect, theBounds: CGRect) {
-        // calculate X
-        let offsetX = theFrame.size.width/CGFloat(values.count)
-        var visible = [Int]()
-        var points = values.enumerated().map { (i, value) -> CGPoint in
-            let p = CGPoint(x: offsetX * CGFloat(i), y: theBounds.minY)
-            if theBounds.contains(p) {
-                visible.append(value)
-            }
-            return p
-        }
-        // calculate Y
-        let minV = visible.min() ?? 0
-        let maxV = visible.max() ?? 1
-        let ratio = theFrame.height/CGFloat(maxV-minV)
+        let (minV, maxV) = superlayer!.globalMinMax(for: theFrame, bounds: theBounds)
+        let ratioX = theFrame.width/CGFloat(values.count)
+        let ratioY = theFrame.height/CGFloat(maxV-minV)
         
-        points = points.enumerated().map {(i, point) -> CGPoint in
-            let x = point.x - theBounds.minX
-            let y = bounds.minY + theFrame.size.height - ratio * CGFloat(values[i]-minV)
-            return CGPoint(x: x.rounded02(), y: y.rounded02())
+        let points = values.enumerated().map {(i, value) -> CGPoint in
+            let x = ratioX * CGFloat(i) - theBounds.minX
+            let y = theBounds.maxY - theBounds.minY - ratioY * CGFloat(value-minV)
+//            return CGPoint(x: x.rounded02(), y: y.rounded02())
+            return CGPoint(x: x, y: y)
         }
+        
         updatePath(points: points, animated: true)
+    }
+    
+    func visibleValues(for theFrame: CGRect, bounds theBounds: CGRect) -> [Int] {
+        let ratio = theFrame.width / CGFloat(values.count)
+        return values.enumerated().compactMap {
+            let x = ratio * CGFloat($0.offset)
+            if x >= theBounds.minX && x <= theBounds.maxX {
+                return $0.element
+            }
+            return nil
+        }
     }
     
     private func updatePath(points: [CGPoint], animated: Bool = false) {
@@ -82,5 +84,25 @@ class LineLayer: CAShapeLayer, Chartable {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension CALayer {
+    func globalMinMax(for theFrame: CGRect, bounds theBounds: CGRect) -> (Int, Int) {
+        var mi = Int.max;
+        var ma = Int.min;
+        
+        let layers = sublayers?.compactMap { $0 as? LineLayer } ?? []
+        for layer in layers {
+            if
+                let lmi = layer.visibleValues(for: theFrame, bounds: theBounds).min(),
+                let lma = layer.visibleValues(for: theFrame, bounds: theBounds).max()
+            {
+                mi = min(mi, lmi)
+                ma = max(ma, lma)
+            }
+        }
+        
+        return (mi, ma)
     }
 }

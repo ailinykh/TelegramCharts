@@ -21,6 +21,8 @@
 		73A1466E2242338300BA7143 /* AxisXLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A1466D2242338300BA7143 /* AxisXLayer.swift */; };
 		73A146702242339100BA7143 /* AxisYLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A1466F2242339100BA7143 /* AxisYLayer.swift */; };
 		73DD97B022442911000F3ADE /* Chartable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD97AF22442911000F3ADE /* Chartable.swift */; };
+		73DD97D32247B65F000F3ADE /* ChartCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD97D22247B65F000F3ADE /* ChartCell.swift */; };
+		73DD97D52247B677000F3ADE /* ColorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73DD97D42247B677000F3ADE /* ColorCell.swift */; };
 		73F333692240D01100E08937 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73F333682240D01100E08937 /* TableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +44,8 @@
 		73A1466D2242338300BA7143 /* AxisXLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisXLayer.swift; sourceTree = "<group>"; };
 		73A1466F2242339100BA7143 /* AxisYLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisYLayer.swift; sourceTree = "<group>"; };
 		73DD97AF22442911000F3ADE /* Chartable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chartable.swift; sourceTree = "<group>"; };
+		73DD97D22247B65F000F3ADE /* ChartCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartCell.swift; sourceTree = "<group>"; };
+		73DD97D42247B677000F3ADE /* ColorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorCell.swift; sourceTree = "<group>"; };
 		73F333682240D01100E08937 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,6 +79,7 @@
 		737C013E22399C760026D2D3 /* TeleChart */ = {
 			isa = PBXGroup;
 			children = (
+				73DD97D12247B634000F3ADE /* Cells */,
 				73DD97B122442B0A000F3ADE /* Protocols */,
 				73DD97B222442B11000F3ADE /* Layers */,
 				737C013F22399C760026D2D3 /* AppDelegate.swift */,
@@ -110,6 +115,15 @@
 				73A146692242333500BA7143 /* LineLayer.swift */,
 			);
 			path = Layers;
+			sourceTree = "<group>";
+		};
+		73DD97D12247B634000F3ADE /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				73DD97D22247B65F000F3ADE /* ChartCell.swift */,
+				73DD97D42247B677000F3ADE /* ColorCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -189,6 +203,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73DD97D32247B65F000F3ADE /* ChartCell.swift in Sources */,
 				737C014022399C760026D2D3 /* AppDelegate.swift in Sources */,
 				73DD97B022442911000F3ADE /* Chartable.swift in Sources */,
 				73F333692240D01100E08937 /* TableViewController.swift in Sources */,
@@ -199,6 +214,7 @@
 				73A146702242339100BA7143 /* AxisYLayer.swift in Sources */,
 				737C015D2239A7F60026D2D3 /* Extensions.swift in Sources */,
 				73A1466A2242333500BA7143 /* LineLayer.swift in Sources */,
+				73DD97D52247B677000F3ADE /* ColorCell.swift in Sources */,
 				73A1466E2242338300BA7143 /* AxisXLayer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
