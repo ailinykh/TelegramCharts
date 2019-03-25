@@ -42,3 +42,16 @@ extension CGFloat {
         return (self*100).rounded()/100
     }
 }
+
+extension Array where Element == Int {
+    func points(for frame: CGRect) -> [CGPoint] {
+        guard
+            let mi = self.min(),
+            let ma = self.max()
+            else { return [] }
+        let deltaX = frame.width / CGFloat(count)
+        let deltaY = frame.height / CGFloat(ma - mi)
+        
+        return enumerated().map { CGPoint(x: CGFloat($0.offset) * deltaX, y: CGFloat($0.element) * deltaY) }
+    }
+}

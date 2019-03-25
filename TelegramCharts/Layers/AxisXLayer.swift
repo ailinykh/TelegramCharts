@@ -27,48 +27,39 @@ class AxisXLayer: CAShapeLayer, Chartable {
             return
         }
         
-        let strings = values.map { time -> String in
-            let date = Date(timeIntervalSince1970: Double(time/1000))
-            let df = DateFormatter()
-            df.dateFormat = "MMM dd"
-            return df.string(from: date)
+        let points = values.points(for: theFrame)
+        let offset = CGFloat(80.0)
+        
+        var visible = [0]
+        points.enumerated().forEach {
+            let last = points[visible.last!]
+            if $0.element.x > last.x + offset {
+                visible.append($0.offset)
+            }
         }
-        let offsetX = theFrame.size.width/CGFloat(values.count)
-        
-        let startIdx = (theBounds.minX/offsetX).rounded()
-        let endIdx = (theBounds.maxX/offsetX).rounded()
-        let some = Array(strings[Int(startIdx)..<Int(endIdx)]).someOf()
-        
-        // TODO: Consider using CAReplicatorLayer here
         
         sublayers?.forEach { $0.removeFromSuperlayer() }
-        
         var f = CGRect(x: 0, y: 0, width: 50, height: 15)
-        let textOffsetX = theBounds.width / CGFloat(some.count)
         
-        some.forEach {
+        visible.forEach {
             let textLayer = CATextLayer()
             textLayer.frame = f
             textLayer.backgroundColor = UIColor.black.cgColor
 //            textLayer.foregroundColor = UIColor.gray.cgColor
             textLayer.fontSize = UIFont.smallSystemFontSize
-            textLayer.string = $0
+            textLayer.string = values[$0].date()
             textLayer.alignmentMode = .center
             addSublayer(textLayer)
-            f.origin.x += textOffsetX
+            f.origin.x += offset
         }
     }
 }
 
-extension Array where Element == String {
-    func someOf() -> [Element] {
-        if count <= 6 {
-            return self
-        }
-        
-        let delta = count / 4
-        var rv = enumerated().filter { $0.0 % delta == 0 }.map { $1 }
-        rv.append(last!)
-        return rv
+private extension Int {
+    func date() -> String {
+        let date = Date(timeIntervalSince1970: TimeInterval(self)/1000.0)
+        let df = DateFormatter()
+        df.dateFormat = "MMM dd"
+        return df.string(from: date)
     }
 }
