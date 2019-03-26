@@ -1,8 +1,8 @@
 //
-//  Extensions.swift
-//  TeleChart
+//  UIColor.swift
+//  TelegramCharts
 //
-//  Created by Anthony Ilinykh on 14/03/2019.
+//  Created by Anthony Ilinykh on 26/03/2019.
 //  Copyright © 2019 Anthony Ilinykh. All rights reserved.
 //
 
@@ -34,24 +34,5 @@ extension UIColor {
         let b = Float(components[2])
         
         return String(format: "#%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255))
-    }
-}
-
-extension CGFloat {
-    func rounded02() -> CGFloat {
-        return (self*100).rounded()/100
-    }
-}
-
-extension Array where Element == Int {
-    func points(for frame: CGRect) -> [CGPoint] {
-        guard
-            let mi = self.min(),
-            let ma = self.max()
-            else { return [] }
-        let deltaX = frame.width / CGFloat(count)
-        let deltaY = frame.height / CGFloat(ma - mi)
-        
-        return enumerated().map { CGPoint(x: CGFloat($0.offset) * deltaX, y: CGFloat($0.element) * deltaY) }
     }
 }

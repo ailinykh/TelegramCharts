@@ -8,6 +8,12 @@
 
 import UIKit
 
+struct XPoint {
+    let x: CGFloat
+    let y: CGFloat
+    let value: Int
+}
+
 class AxisXLayer: CAShapeLayer, Chartable {
 
     var values: [Int]
@@ -27,30 +33,38 @@ class AxisXLayer: CAShapeLayer, Chartable {
             return
         }
         
-        let points = values.points(for: theFrame)
+        let deltaX = theFrame.width / CGFloat(values.count)
+        let points = values.enumerated().map {
+            CGPoint(x: CGFloat($0.offset) * deltaX - theBounds.minX, y: 0)
+        }
         let offset = CGFloat(80.0)
         
-        var visible = [0]
-        points.enumerated().forEach {
-            let last = points[visible.last!]
-            if $0.element.x > last.x + offset {
-                visible.append($0.offset)
+        var sievedPoints = [points.first!]
+        points.forEach {
+            let last = sievedPoints.last!
+            if $0.x > last.x + offset {
+                sievedPoints.append($0)
             }
         }
         
-        sublayers?.forEach { $0.removeFromSuperlayer() }
-        var f = CGRect(x: 0, y: 0, width: 50, height: 15)
+        let visible = sievedPoints.filter {
+            $0.x + 50 > theBounds.minX && $0.x < theBounds.maxX
+        }
         
-        visible.forEach {
+        print(#function, visible)
+        sublayers?.forEach { $0.removeFromSuperlayer() }
+//        var f = CGRect(x: 0, y: 0, width: 50, height: 15)
+        
+        sievedPoints.forEach {
             let textLayer = CATextLayer()
-            textLayer.frame = f
+            textLayer.frame = CGRect(x: $0.x, y: 0, width: 50, height: 15)
             textLayer.backgroundColor = UIColor.black.cgColor
 //            textLayer.foregroundColor = UIColor.gray.cgColor
             textLayer.fontSize = UIFont.smallSystemFontSize
-            textLayer.string = values[$0].date()
+//            textLayer.string = $0.date()
+            textLayer.string = "\($0)"
             textLayer.alignmentMode = .center
             addSublayer(textLayer)
-            f.origin.x += offset
         }
     }
 }

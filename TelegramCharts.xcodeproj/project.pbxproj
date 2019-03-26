@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		735DFE47224A0569007B0F33 /* CGFloat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735DFE46224A0569007B0F33 /* CGFloat.swift */; };
+		735DFE49224A057F007B0F33 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735DFE48224A057F007B0F33 /* UIColor.swift */; };
 		737C014022399C760026D2D3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C013F22399C760026D2D3 /* AppDelegate.swift */; };
 		737C014522399C760026D2D3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 737C014322399C760026D2D3 /* Main.storyboard */; };
 		737C014722399C780026D2D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 737C014622399C780026D2D3 /* Assets.xcassets */; };
@@ -16,7 +18,6 @@
 		737C01572239A5EC0026D2D3 /* ChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C01562239A5EC0026D2D3 /* ChartView.swift */; };
 		737C01592239A7550026D2D3 /* chart_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 737C01582239A7550026D2D3 /* chart_data.json */; };
 		737C015B2239A7840026D2D3 /* ChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C015A2239A7840026D2D3 /* ChartData.swift */; };
-		737C015D2239A7F60026D2D3 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 737C015C2239A7F60026D2D3 /* Extensions.swift */; };
 		73A1466A2242333500BA7143 /* LineLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A146692242333500BA7143 /* LineLayer.swift */; };
 		73A1466E2242338300BA7143 /* AxisXLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A1466D2242338300BA7143 /* AxisXLayer.swift */; };
 		73A146702242339100BA7143 /* AxisYLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73A1466F2242339100BA7143 /* AxisYLayer.swift */; };
@@ -27,6 +28,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		735DFE46224A0569007B0F33 /* CGFloat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGFloat.swift; sourceTree = "<group>"; };
+		735DFE48224A057F007B0F33 /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		737C013C22399C760026D2D3 /* TelegramCharts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TelegramCharts.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		737C013F22399C760026D2D3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		737C014422399C760026D2D3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -38,7 +41,6 @@
 		737C01562239A5EC0026D2D3 /* ChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartView.swift; sourceTree = "<group>"; };
 		737C01582239A7550026D2D3 /* chart_data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = chart_data.json; sourceTree = "<group>"; };
 		737C015A2239A7840026D2D3 /* ChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartData.swift; sourceTree = "<group>"; };
-		737C015C2239A7F60026D2D3 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		73A146692242333500BA7143 /* LineLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineLayer.swift; sourceTree = "<group>"; };
 		73A1466D2242338300BA7143 /* AxisXLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisXLayer.swift; sourceTree = "<group>"; };
 		73A1466F2242339100BA7143 /* AxisYLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisYLayer.swift; sourceTree = "<group>"; };
@@ -59,6 +61,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		735DFE45224A0552007B0F33 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				735DFE46224A0569007B0F33 /* CGFloat.swift */,
+				735DFE48224A057F007B0F33 /* UIColor.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		737C013322399C760026D2D3 = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +89,7 @@
 		737C013E22399C760026D2D3 /* TelegramCharts */ = {
 			isa = PBXGroup;
 			children = (
+				735DFE45224A0552007B0F33 /* Extensions */,
 				73DD97D12247B634000F3ADE /* Cells */,
 				73DD97B122442B0A000F3ADE /* Protocols */,
 				73DD97B222442B11000F3ADE /* Layers */,
@@ -87,7 +99,6 @@
 				737C015A2239A7840026D2D3 /* ChartData.swift */,
 				737C01562239A5EC0026D2D3 /* ChartView.swift */,
 				737C01542239A1E90026D2D3 /* ChartViewController.swift */,
-				737C015C2239A7F60026D2D3 /* Extensions.swift */,
 				737C014B22399C780026D2D3 /* Info.plist */,
 				737C014822399C780026D2D3 /* LaunchScreen.storyboard */,
 				737C014322399C760026D2D3 /* Main.storyboard */,
@@ -203,14 +214,15 @@
 			files = (
 				73DD97D32247B65F000F3ADE /* ChartCell.swift in Sources */,
 				737C014022399C760026D2D3 /* AppDelegate.swift in Sources */,
+				735DFE47224A0569007B0F33 /* CGFloat.swift in Sources */,
 				73DD97B022442911000F3ADE /* Chartable.swift in Sources */,
+				735DFE49224A057F007B0F33 /* UIColor.swift in Sources */,
 				73F333692240D01100E08937 /* TableViewController.swift in Sources */,
 				737C015222399CB60026D2D3 /* SashesControl.swift in Sources */,
 				737C01572239A5EC0026D2D3 /* ChartView.swift in Sources */,
 				737C015B2239A7840026D2D3 /* ChartData.swift in Sources */,
 				737C01552239A1E90026D2D3 /* ChartViewController.swift in Sources */,
 				73A146702242339100BA7143 /* AxisYLayer.swift in Sources */,
-				737C015D2239A7F60026D2D3 /* Extensions.swift in Sources */,
 				73A1466A2242333500BA7143 /* LineLayer.swift in Sources */,
 				73DD97D52247B677000F3ADE /* ColorCell.swift in Sources */,
 				73A1466E2242338300BA7143 /* AxisXLayer.swift in Sources */,
