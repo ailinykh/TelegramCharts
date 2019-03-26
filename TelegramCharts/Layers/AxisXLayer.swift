@@ -83,12 +83,3 @@ class AxisXLayer: CAShapeLayer, Chartable {
         }
     }
 }
-
-private extension Int {
-    func date() -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(self)/1000.0)
-        let df = DateFormatter()
-        df.dateFormat = "MMM dd"
-        return df.string(from: date)
-    }
-}
