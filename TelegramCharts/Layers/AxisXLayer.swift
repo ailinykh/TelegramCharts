@@ -10,21 +10,17 @@ import UIKit
 
 class XLabel: CATextLayer {
     
-    static let space = CGFloat(30.0)
-    
-    static var df: DateFormatter {
-        let df = DateFormatter()
-        df.dateFormat = "MMM dd"
-        return df
-    }
+    static let space = CGFloat(20.0)
     
     let value: Int
     
     override var string: Any? {
         set {}
         get {
+            let df = DateFormatter()
+            df.dateFormat = "MMM dd"
             let date = Date(timeIntervalSince1970: TimeInterval(value)/1000.0)
-            return XLabel.df.string(from: date)
+            return df.string(from: date)
         }
     }
     
@@ -74,7 +70,7 @@ class AxisXLayer: CAShapeLayer, Chartable {
             }
         }
         
-//        print(#function, "all:", allLabels.count, "visible:", visible.count)
+        print(#function, "all:", allLabels.count, "visible:", visible.count)
         
         sublayers?.forEach { $0.removeFromSuperlayer() }
         
