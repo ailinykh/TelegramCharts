@@ -8,10 +8,34 @@
 
 import UIKit
 
-struct XPoint {
-    let x: CGFloat
-    let y: CGFloat
+class XLabel: CATextLayer {
+    
+    static let space = CGFloat(30.0)
+    
+    static var df: DateFormatter {
+        let df = DateFormatter()
+        df.dateFormat = "MMM dd"
+        return df
+    }
+    
     let value: Int
+    
+    override var string: Any? {
+        set {}
+        get {
+            let date = Date(timeIntervalSince1970: TimeInterval(value)/1000.0)
+            return XLabel.df.string(from: date)
+        }
+    }
+    
+    init(value: Int) {
+        self.value = value
+        super.init()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 class AxisXLayer: CAShapeLayer, Chartable {
@@ -34,37 +58,28 @@ class AxisXLayer: CAShapeLayer, Chartable {
         }
         
         let deltaX = theFrame.width / CGFloat(values.count)
-        let points = values.enumerated().map {
-            CGPoint(x: CGFloat($0.offset) * deltaX - theBounds.minX, y: 0)
+        let allLabels = values.enumerated().map { (offset, element) -> XLabel in
+            let label = XLabel(value: element)
+            let x = CGFloat(offset) * deltaX - theBounds.minX
+            label.frame = CGRect(x: x.rounded02(), y: 0, width: 50, height: 15)
+            label.fontSize = UIFont.smallSystemFontSize
+            label.backgroundColor = UIColor.black.cgColor
+            label.alignmentMode = .center
+            return label
         }
-        let offset = CGFloat(80.0)
         
-        var sievedPoints = [points.first!]
-        points.forEach {
-            let last = sievedPoints.last!
-            if $0.x > last.x + offset {
-                sievedPoints.append($0)
+        let visible = allLabels.reduce(into: [allLabels.first!]) {
+            if $1.frame.minX > $0.last!.frame.maxX + XLabel.space {
+                $0.append($1)
             }
         }
         
-        let visible = sievedPoints.filter {
-            $0.x + 50 > theBounds.minX && $0.x < theBounds.maxX
-        }
+//        print(#function, "all:", allLabels.count, "visible:", visible.count)
         
-        print(#function, visible)
         sublayers?.forEach { $0.removeFromSuperlayer() }
-//        var f = CGRect(x: 0, y: 0, width: 50, height: 15)
         
-        sievedPoints.forEach {
-            let textLayer = CATextLayer()
-            textLayer.frame = CGRect(x: $0.x, y: 0, width: 50, height: 15)
-            textLayer.backgroundColor = UIColor.black.cgColor
-//            textLayer.foregroundColor = UIColor.gray.cgColor
-            textLayer.fontSize = UIFont.smallSystemFontSize
-//            textLayer.string = $0.date()
-            textLayer.string = "\($0)"
-            textLayer.alignmentMode = .center
-            addSublayer(textLayer)
+        visible.forEach {
+            addSublayer($0)
         }
     }
 }
