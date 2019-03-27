@@ -32,6 +32,10 @@ class XLabel: CATextLayer {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+//    static func ==(rhs: XLabel, lhs: XLabel) -> Bool {
+//        return rhs.value == lhs.value
+//    }
 }
 
 class AxisXLayer: CAShapeLayer, Chartable {
