@@ -89,15 +89,45 @@ class AxisXLayer: CAShapeLayer, Chartable {
         
         print(#function, "candidates:", candidates.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
         
-        appeared.forEach { addSublayer($0) }
+        appeared.forEach {
+            $0.opacity = 0.0
+            let animation = CABasicAnimation(keyPath: "opacity")
+            animation.fromValue = 0.0
+            animation.toValue = 1.0
+            animation.duration = 3.0
+            animation.fillMode = CAMediaTimingFillMode.backwards
+            $0.add(animation, forKey: "appear")
+            $0.opacity = 1.0
+            addSublayer($0)
+        }
         
         moved.forEach {
             if let candidate = candidates.find(label: $0) {
+                if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
+                    $0.removeAnimation(forKey: "move")
+                    $0.frame = presentation.frame
+                }
+                
+                let animation = CABasicAnimation(keyPath: "frame")
+                animation.fromValue = $0.frame
+                animation.toValue = candidate.frame
+                animation.duration = 0.1
+                animation.fillMode = CAMediaTimingFillMode.backwards
+                $0.add(animation, forKey: "move")
                 $0.frame = candidate.frame
             }
         }
         
-        disappeared.forEach { $0.removeFromSuperlayer() }
+        disappeared.forEach {
+            let animation = CABasicAnimation(keyPath: "opacity")
+            animation.fromValue = 1.0
+            animation.toValue = 0.0
+            animation.duration = 3.0
+            animation.fillMode = CAMediaTimingFillMode.backwards
+            $0.add(animation, forKey: "disappear")
+            $0.opacity = 0.0
+            $0.removeFromSuperlayer()
+        }
     }
 }
 
