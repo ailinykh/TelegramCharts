@@ -83,6 +83,7 @@ class AxisXLayer: CAShapeLayer, Chartable {
             }
         }
         
+        /*
         let appeared = candidates.filter { !labels.contains(label: $0) }
         let moved = labels.filter { candidates.contains(label: $0) }
         let disappeared = labels.filter { !candidates.contains(label: $0) }
@@ -128,6 +129,7 @@ class AxisXLayer: CAShapeLayer, Chartable {
             $0.opacity = 0.0
             $0.removeFromSuperlayer()
         }
+         */
     }
 }
 
