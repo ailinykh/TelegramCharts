@@ -47,12 +47,23 @@ class AxisXLayer: CAShapeLayer, Chartable {
 
     var values: [Int]
     
-    var labels: [XLabel] {
+    var allLabels: [XLabel]
+    
+    var visibleLabels: [XLabel] {
         return sublayers?.compactMap { $0 as? XLabel } ?? []
     }
     
     init(values: [Int]) {
         self.values = values
+        self.allLabels = values.enumerated().map { (offset, element) -> XLabel in
+            let label = XLabel(value: element)
+            label.frame = CGRect(x: 0, y: 0, width: 50, height: 15)
+            label.fontSize = UIFont.smallSystemFontSize
+            label.backgroundColor = UIColor.black.cgColor
+            label.alignmentMode = .center
+            return label
+        }
+        
         super.init()
     }
     
@@ -67,14 +78,8 @@ class AxisXLayer: CAShapeLayer, Chartable {
         }
         
         let deltaX = theFrame.width / CGFloat(values.count)
-        let allLabels = values.enumerated().map { (offset, element) -> XLabel in
-            let label = XLabel(value: element)
-            let x = CGFloat(offset) * deltaX - theBounds.minX
-            label.frame = CGRect(x: x.rounded02(), y: 0, width: 50, height: 15)
-            label.fontSize = UIFont.smallSystemFontSize
-            label.backgroundColor = UIColor.black.cgColor
-            label.alignmentMode = .center
-            return label
+        allLabels.enumerated().forEach {
+            $0.element.frame.origin.x = (CGFloat($0.offset) * deltaX) - theBounds.minX
         }
         
         let candidates = allLabels.reduce(into: [allLabels.first!]) {
@@ -83,53 +88,15 @@ class AxisXLayer: CAShapeLayer, Chartable {
             }
         }
         
-        /*
-        let appeared = candidates.filter { !labels.contains(label: $0) }
-        let moved = labels.filter { candidates.contains(label: $0) }
-        let disappeared = labels.filter { !candidates.contains(label: $0) }
+        let appeared = candidates.filter { !visibleLabels.contains(label: $0) }
+        let moved = visibleLabels.filter { candidates.contains(label: $0) }
+        let disappeared = visibleLabels.filter { !candidates.contains(label: $0) }
         
-        print(#function, "candidates:", candidates.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
+//        print(#function, "candidates:", candidates.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
         
-        appeared.forEach {
-            $0.opacity = 0.0
-            let animation = CABasicAnimation(keyPath: "opacity")
-            animation.fromValue = 0.0
-            animation.toValue = 1.0
-            animation.duration = 3.0
-            animation.fillMode = CAMediaTimingFillMode.backwards
-            $0.add(animation, forKey: "appear")
-            $0.opacity = 1.0
-            addSublayer($0)
-        }
-        
-        moved.forEach {
-            if let candidate = candidates.find(label: $0) {
-                if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
-                    $0.removeAnimation(forKey: "move")
-                    $0.frame = presentation.frame
-                }
-                
-                let animation = CABasicAnimation(keyPath: "frame")
-                animation.fromValue = $0.frame
-                animation.toValue = candidate.frame
-                animation.duration = 0.1
-                animation.fillMode = CAMediaTimingFillMode.backwards
-                $0.add(animation, forKey: "move")
-                $0.frame = candidate.frame
-            }
-        }
-        
-        disappeared.forEach {
-            let animation = CABasicAnimation(keyPath: "opacity")
-            animation.fromValue = 1.0
-            animation.toValue = 0.0
-            animation.duration = 3.0
-            animation.fillMode = CAMediaTimingFillMode.backwards
-            $0.add(animation, forKey: "disappear")
-            $0.opacity = 0.0
-            $0.removeFromSuperlayer()
-        }
-         */
+        appeared    .forEach { addSublayer($0) }
+        moved       .forEach { $0.frame = candidates.find(label: $0)!.frame }
+        disappeared .forEach { $0.removeFromSuperlayer() }
     }
 }
 
