@@ -79,24 +79,45 @@ class AxisXLayer: CAShapeLayer, Chartable {
         
         let deltaX = theFrame.width / CGFloat(values.count)
         allLabels.enumerated().forEach {
-            $0.element.frame.origin.x = (CGFloat($0.offset) * deltaX) - theBounds.minX
+            let x = (CGFloat($0.offset) * deltaX) - theBounds.minX
+            $0.element.position = CGPoint(x: x, y: theBounds.minY)
         }
         
         let candidates = allLabels.reduce(into: [allLabels.first!]) {
             if $1.frame.minX > $0.last!.frame.maxX + XLabel.space {
+                for l in visibleLabels {
+                    if l.frame.intersects($1.frame) {
+                        return
+                    }
+                }
                 $0.append($1)
             }
         }
         
         let appeared = candidates.filter { !visibleLabels.contains(label: $0) }
         let moved = visibleLabels.filter { candidates.contains(label: $0) }
-        let disappeared = visibleLabels.filter { !candidates.contains(label: $0) }
+//        let disappeared = visibleLabels.filter { !candidates.contains(label: $0) }
         
 //        print(#function, "candidates:", candidates.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
         
         appeared    .forEach { addSublayer($0) }
-        moved       .forEach { $0.frame = candidates.find(label: $0)!.frame }
-        disappeared .forEach { $0.removeFromSuperlayer() }
+        moved       .forEach {
+            let final = candidates.find(label: $0)!
+//            if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
+//                $0.removeAnimation(forKey: "move")
+//                $0.position = presentation.position
+//            }
+//
+//            let animation = CABasicAnimation(keyPath: "position")
+//            animation.timingFunction = CAMediaTimingFunction(name: .linear)
+//            animation.fromValue = $0.position
+//            animation.toValue = final.position
+//            animation.duration = 0.1
+//            animation.fillMode = CAMediaTimingFillMode.backwards
+//            $0.add(animation, forKey: "move")
+            $0.position = final.position
+        }
+//        disappeared .forEach { $0.removeFromSuperlayer() }
     }
 }
 
