@@ -10,8 +10,6 @@ import UIKit
 
 class XLabel: CATextLayer {
     
-    static let space = CGFloat(20.0)
-    
     let value: Int
     
     override var string: Any? {
@@ -57,9 +55,11 @@ class AxisXLayer: CAShapeLayer, Chartable {
         self.values = values
         self.allLabels = values.enumerated().map { (offset, element) -> XLabel in
             let label = XLabel(value: element)
-            label.frame = CGRect(x: 0, y: 0, width: 50, height: 15)
+            label.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+            label.frame = CGRect(x: 0, y: 0, width: 60, height: 15)
             label.fontSize = UIFont.smallSystemFontSize
-            label.backgroundColor = UIColor.black.cgColor
+//            label.backgroundColor = UIColor.black.cgColor
+            label.foregroundColor = UIColor.gray.cgColor
             label.alignmentMode = .center
             return label
         }
@@ -72,10 +72,7 @@ class AxisXLayer: CAShapeLayer, Chartable {
     }
     
     func fit(theFrame: CGRect, theBounds: CGRect) {
-        guard values.count > 0 else {
-            print(#function, self, "no values")
-            return
-        }
+        assert(values.count > 0, "values missed!")
         
         let deltaX = theFrame.width / CGFloat(values.count)
         allLabels.enumerated().forEach {
@@ -83,41 +80,29 @@ class AxisXLayer: CAShapeLayer, Chartable {
             $0.element.position = CGPoint(x: x, y: theBounds.minY)
         }
         
-        let candidates = allLabels.reduce(into: [allLabels.first!]) {
-            if $1.frame.minX > $0.last!.frame.maxX + XLabel.space {
+        let final = allLabels.reduce(into: [allLabels.first!]) {
+            if !visibleLabels.contains(label: $1) {
+                // check intersection
                 for l in visibleLabels {
                     if l.frame.intersects($1.frame) {
                         return
                     }
                 }
+            }
+            if !$0.last!.frame.intersects($1.frame) {
                 $0.append($1)
             }
         }
         
-        let appeared = candidates.filter { !visibleLabels.contains(label: $0) }
-        let moved = visibleLabels.filter { candidates.contains(label: $0) }
-//        let disappeared = visibleLabels.filter { !candidates.contains(label: $0) }
+        let appeared = final.filter { !visibleLabels.contains(label: $0) }
+        let moved = visibleLabels.filter { final.contains(label: $0) }
+        let disappeared = visibleLabels.filter { !final.contains(label: $0) }
         
-//        print(#function, "candidates:", candidates.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
+//        print(#function, "final:", final.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
         
         appeared    .forEach { addSublayer($0) }
-        moved       .forEach {
-            let final = candidates.find(label: $0)!
-//            if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
-//                $0.removeAnimation(forKey: "move")
-//                $0.position = presentation.position
-//            }
-//
-//            let animation = CABasicAnimation(keyPath: "position")
-//            animation.timingFunction = CAMediaTimingFunction(name: .linear)
-//            animation.fromValue = $0.position
-//            animation.toValue = final.position
-//            animation.duration = 0.1
-//            animation.fillMode = CAMediaTimingFillMode.backwards
-//            $0.add(animation, forKey: "move")
-            $0.position = final.position
-        }
-//        disappeared .forEach { $0.removeFromSuperlayer() }
+        moved       .forEach { $0.position = final.find(label: $0)!.position }
+        disappeared .forEach { $0.removeFromSuperlayer() }
     }
 }
 
