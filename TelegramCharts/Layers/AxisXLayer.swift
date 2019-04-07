@@ -98,10 +98,26 @@ class AxisXLayer: CAShapeLayer, Chartable {
         let moved = visibleLabels.filter { final.contains(label: $0) }
         let disappeared = visibleLabels.filter { !final.contains(label: $0) }
         
-//        print(#function, "final:", final.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
+        print(#function, "final:", final.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
         
         appeared    .forEach { addSublayer($0) }
-        moved       .forEach { $0.position = final.find(label: $0)!.position }
+        moved       .forEach {
+            let f = final.find(label: $0)!
+            
+//            if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
+//                $0.removeAnimation(forKey: "move")
+//                $0.position = presentation.position
+//            }
+//            let animation = CABasicAnimation(keyPath: #keyPath(CALayer.position))
+//            animation.timingFunction = CAMediaTimingFunction(name: .linear)
+//            animation.fromValue = $0.position
+//            animation.toValue = f.position
+//            animation.duration = 0.1
+//            animation.fillMode = CAMediaTimingFillMode.backwards
+//            $0.add(animation, forKey: "move")
+
+            $0.position = f.position
+        }
         disappeared .forEach { $0.removeFromSuperlayer() }
     }
 }

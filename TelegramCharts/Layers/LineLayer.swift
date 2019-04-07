@@ -71,7 +71,7 @@ class LineLayer: CAShapeLayer, Chartable {
                 self.path = presentation.path
             }
             
-            let animation = CABasicAnimation(keyPath: "path")
+            let animation = CABasicAnimation(keyPath: #keyPath(CAShapeLayer.path))
             animation.timingFunction = CAMediaTimingFunction(name: .linear)
             animation.fromValue = self.path
             animation.toValue = path

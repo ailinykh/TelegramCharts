@@ -76,18 +76,6 @@ class ChartView: UIView {
     func addChart(with color: UIColor, values: [Int]) {
 //        print(#function, color.hexString, "\(values[...3])... count:", values.count)
         let line = LineLayer(color: color.cgColor, values: values)
-        let (f, b) = frameAndBounds(for: currentRange)
-//        line.frame = canvas
-//        line.fit(theFrame: f, theBounds: b)
-//        
-//        let animation = CABasicAnimation(keyPath: "frame")
-//        animation.timingFunction = CAMediaTimingFunction(name: .easeIn)
-//        animation.fromValue = CGRect(x: canvas.minX, y: canvas.minY-canvas.height, width: canvas.width, height: canvas.height)
-//        animation.toValue = canvas
-//        animation.duration = 0.1
-//        animation.fillMode = CAMediaTimingFillMode.backwards
-//        line.add(animation, forKey: nil)
-        
         layer.addSublayer(line)
     }
     
@@ -111,11 +99,9 @@ class ChartView: UIView {
         currentRange = range
         let (f, b) = frameAndBounds(for: range)
         
-        layer.sublayers?.forEach {
-            if let layer = $0 as? Chartable {
-//                print(#function, layer, f, b)
-                layer.fit(theFrame: f, theBounds: b)
-            }
+        layer.sublayers?.compactMap { $0 as? Chartable }.forEach {
+//            print(#function, layer, f, b)
+            $0.fit(theFrame: f, theBounds: b)
         }
     }
     
