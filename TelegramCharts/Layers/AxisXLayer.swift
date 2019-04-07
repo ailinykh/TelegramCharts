@@ -42,6 +42,19 @@ class XLabel: CATextLayer {
 }
 
 class AxisXLayer: CAShapeLayer, Chartable {
+    
+    class func labels(from values: [Int]) -> [XLabel] {
+        return values.enumerated().map { (offset, element) -> XLabel in
+            let label = XLabel(value: element)
+            label.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+            label.frame = CGRect(x: 0, y: 0, width: 60, height: 15)
+            label.fontSize = UIFont.smallSystemFontSize
+            //            label.backgroundColor = UIColor.black.cgColor
+            label.foregroundColor = UIColor.gray.cgColor
+            label.alignmentMode = .center
+            return label
+        }
+    }
 
     var values: [Int]
     
@@ -53,18 +66,14 @@ class AxisXLayer: CAShapeLayer, Chartable {
     
     init(values: [Int]) {
         self.values = values
-        self.allLabels = values.enumerated().map { (offset, element) -> XLabel in
-            let label = XLabel(value: element)
-            label.anchorPoint = CGPoint(x: 0.0, y: 0.5)
-            label.frame = CGRect(x: 0, y: 0, width: 60, height: 15)
-            label.fontSize = UIFont.smallSystemFontSize
-//            label.backgroundColor = UIColor.black.cgColor
-            label.foregroundColor = UIColor.gray.cgColor
-            label.alignmentMode = .center
-            return label
-        }
-        
+        self.allLabels = AxisXLayer.labels(from: values)
         super.init()
+    }
+    
+    override init(layer: Any) {
+        self.values = (layer as! AxisXLayer).values
+        self.allLabels = AxisXLayer.labels(from: values)
+        super.init(layer: layer)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -73,6 +82,7 @@ class AxisXLayer: CAShapeLayer, Chartable {
     
     func fit(theFrame: CGRect, theBounds: CGRect) {
         assert(values.count > 0, "values missed!")
+        assert(Thread.current.isMainThread, "main thread only!")
         
         let deltaX = theFrame.width / CGFloat(values.count)
         allLabels.enumerated().forEach {
@@ -110,8 +120,8 @@ class AxisXLayer: CAShapeLayer, Chartable {
 //            }
 //            let animation = CABasicAnimation(keyPath: #keyPath(CALayer.position))
 //            animation.timingFunction = CAMediaTimingFunction(name: .linear)
-//            animation.fromValue = $0.position
-//            animation.toValue = f.position
+//            animation.fromValue = NSValue(cgPoint: $0.position)
+//            animation.toValue = NSValue(cgPoint: f.position)
 //            animation.duration = 0.1
 //            animation.fillMode = CAMediaTimingFillMode.backwards
 //            $0.add(animation, forKey: "move")
