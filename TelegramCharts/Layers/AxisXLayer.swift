@@ -8,6 +8,11 @@
 
 import UIKit
 
+struct XLabelData {
+    var frame: CGRect
+    let value: Int
+}
+
 class XLabel: CATextLayer {
     
     let value: Int
@@ -43,36 +48,32 @@ class XLabel: CATextLayer {
 
 class AxisXLayer: CAShapeLayer, Chartable {
     
-    class func labels(from values: [Int]) -> [XLabel] {
-        return values.enumerated().map { (offset, element) -> XLabel in
-            let label = XLabel(value: element)
+    class func data(from values: [Int]) -> [XLabel] {
+        return values.map {
+            let label = XLabel(value: $0)
             label.anchorPoint = CGPoint(x: 0.0, y: 0.5)
             label.frame = CGRect(x: 0, y: 0, width: 60, height: 15)
             label.fontSize = UIFont.smallSystemFontSize
-            //            label.backgroundColor = UIColor.black.cgColor
+            label.backgroundColor = UIColor.black.cgColor
             label.foregroundColor = UIColor.gray.cgColor
             label.alignmentMode = .center
             return label
         }
     }
 
-    var values: [Int]
-    
-    var allLabels: [XLabel]
+    var data: [XLabelData]
     
     var visibleLabels: [XLabel] {
         return sublayers?.compactMap { $0 as? XLabel } ?? []
     }
     
     init(values: [Int]) {
-        self.values = values
-        self.allLabels = AxisXLayer.labels(from: values)
+        self.data = values.map { XLabelData(frame: CGRect(x: 0, y: 0, width: 60, height: 15), value: $0) }
         super.init()
     }
     
     override init(layer: Any) {
-        self.values = (layer as! AxisXLayer).values
-        self.allLabels = AxisXLayer.labels(from: values)
+        self.data = (layer as! AxisXLayer).data
         super.init(layer: layer)
     }
     
@@ -81,17 +82,19 @@ class AxisXLayer: CAShapeLayer, Chartable {
     }
     
     func fit(theFrame: CGRect, theBounds: CGRect) {
-        assert(values.count > 0, "values missed!")
+        assert(data.count > 0, "values missed!")
         assert(Thread.current.isMainThread, "main thread only!")
         
-        let deltaX = theFrame.width / CGFloat(values.count)
-        allLabels.enumerated().forEach {
+        let deltaX = theFrame.width / CGFloat(data.count)
+        data = data.enumerated().map {
+            var d = $0.element
             let x = (CGFloat($0.offset) * deltaX) - theBounds.minX
-            $0.element.position = CGPoint(x: x, y: theBounds.minY)
+            d.frame.origin = CGPoint(x: x, y: theBounds.minY)
+            return d
         }
         
-        let final = allLabels.reduce(into: [allLabels.first!]) {
-            if !visibleLabels.contains(label: $1) {
+        let final = data.reduce(into: [data.first!]) {
+            if !visibleLabels.containsLabel(with: $1.value) {
                 // check intersection
                 for l in visibleLabels {
                     if l.frame.intersects($1.frame) {
@@ -104,15 +107,28 @@ class AxisXLayer: CAShapeLayer, Chartable {
             }
         }
         
-        let appeared = final.filter { !visibleLabels.contains(label: $0) }
-        let moved = visibleLabels.filter { final.contains(label: $0) }
-        let disappeared = visibleLabels.filter { !final.contains(label: $0) }
+        let appeared = final.compactMap { data -> XLabel? in
+            if !visibleLabels.containsLabel(with: data.value) {
+                let label = XLabel(value: data.value)
+                label.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+                label.frame = data.frame
+                label.fontSize = UIFont.smallSystemFontSize
+                label.backgroundColor = UIColor.black.cgColor
+                label.foregroundColor = UIColor.gray.cgColor
+                label.alignmentMode = .center
+                return label
+            }
+            return nil
+        }
+        
+        let moved = visibleLabels.filter { final.contains(value: $0.value) }
+        let disappeared = visibleLabels.filter { !final.contains(value: $0.value) }
         
         print(#function, "final:", final.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
-        
+        print(frame, theFrame, theBounds)
         appeared    .forEach { addSublayer($0) }
         moved       .forEach {
-            let f = final.find(label: $0)!
+            let f = final.find(value: $0.value)!
             
 //            if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
 //                $0.removeAnimation(forKey: "move")
@@ -125,29 +141,42 @@ class AxisXLayer: CAShapeLayer, Chartable {
 //            animation.duration = 0.1
 //            animation.fillMode = CAMediaTimingFillMode.backwards
 //            $0.add(animation, forKey: "move")
-
-            $0.position = f.position
+            
+            if abs($0.position.x - f.frame.origin.x) > 50.0 {
+                $0.position = f.frame.origin
+            }
         }
         disappeared .forEach { $0.removeFromSuperlayer() }
     }
 }
 
-private extension Array where Element == XLabel {
-    func contains(label: XLabel) -> Bool {
-        for l in self {
-            if l == label {
+private extension Array where Element == XLabelData {
+    func contains(value: Int) -> Bool {
+        for v in self {
+            if v.value == value {
                 return true
             }
         }
         return false
     }
     
-    func find(label: XLabel) -> XLabel? {
-        for l in self {
-            if l == label {
-                return l
+    func find(value: Int) -> XLabelData? {
+        for v in self {
+            if v.value == value {
+                return v
             }
         }
         return nil
+    }
+}
+
+private extension Array where Element == XLabel {
+    func containsLabel(with value: Int) -> Bool {
+        for l in self {
+            if l.value == value {
+                return true
+            }
+        }
+        return false
     }
 }
