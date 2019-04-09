@@ -99,15 +99,15 @@ class ChartView: UIView {
         currentRange = range
         let (f, b) = frameAndBounds(for: range)
         
-//        CATransaction.begin()
-//        CATransaction.setAnimationDuration(0.4)
+        CATransaction.begin()
+        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
         
         layer.sublayers?.compactMap { $0 as? Chartable }.forEach {
 //            print(#function, $0, f, b)
             $0.fit(theFrame: f, theBounds: b)
         }
         
-//        CATransaction.commit()
+        CATransaction.commit()
     }
     
     private func frameAndBounds(for range: ChartRange) -> (CGRect, CGRect) {

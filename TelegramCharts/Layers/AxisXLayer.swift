@@ -110,10 +110,10 @@ class AxisXLayer: CAShapeLayer, Chartable {
         let appeared = final.compactMap { data -> XLabel? in
             if !visibleLabels.containsLabel(with: data.value) {
                 let label = XLabel(value: data.value)
-                label.anchorPoint = CGPoint(x: 0.0, y: 0.5)
+                label.anchorPoint = CGPoint(x: 0.0, y: 0.0)
                 label.frame = data.frame
                 label.fontSize = UIFont.smallSystemFontSize
-                label.backgroundColor = UIColor.black.cgColor
+                label.backgroundColor = UIColor.black.withAlphaComponent(0.1).cgColor
                 label.foregroundColor = UIColor.gray.cgColor
                 label.alignmentMode = .center
                 return label
@@ -125,28 +125,53 @@ class AxisXLayer: CAShapeLayer, Chartable {
         let disappeared = visibleLabels.filter { !final.contains(value: $0.value) }
         
         print(#function, "final:", final.count, "appeared:", appeared.count, "moved:", moved.count, "disappeared:", disappeared.count)
-        print(frame, theFrame, theBounds)
-        appeared    .forEach { addSublayer($0) }
-        moved       .forEach {
+        
+        appeared.forEach {
+            $0.opacity = 0.0
+            let animation = CABasicAnimation(keyPath: #keyPath(CALayer.opacity))
+            animation.timingFunction = CAMediaTimingFunction(name: .linear)
+            animation.fromValue = 0.0
+            animation.toValue = 1.0
+            animation.duration = 0.4
+            animation.fillMode = .backwards
+            $0.add(animation, forKey: "appear")
+            $0.opacity = 1.0
+            
+            addSublayer($0)
+        }
+        
+        
+        moved.forEach {
             let f = final.find(value: $0.value)!
             
-//            if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
-//                $0.removeAnimation(forKey: "move")
-//                $0.position = presentation.position
-//            }
-//            let animation = CABasicAnimation(keyPath: #keyPath(CALayer.position))
-//            animation.timingFunction = CAMediaTimingFunction(name: .linear)
-//            animation.fromValue = NSValue(cgPoint: $0.position)
-//            animation.toValue = NSValue(cgPoint: f.position)
-//            animation.duration = 0.1
-//            animation.fillMode = CAMediaTimingFillMode.backwards
-//            $0.add(animation, forKey: "move")
-            
-            if abs($0.position.x - f.frame.origin.x) > 50.0 {
-                $0.position = f.frame.origin
+            if let _ = $0.animation(forKey: "move"), let presentation = $0.presentation() {
+                $0.removeAnimation(forKey: "move")
+                $0.position = presentation.position
             }
+            let animation = CABasicAnimation(keyPath: #keyPath(CALayer.position))
+            animation.timingFunction = CAMediaTimingFunction(name: .linear)
+            animation.fromValue = NSValue(cgPoint: $0.position)
+            animation.toValue = NSValue(cgPoint: f.frame.origin)
+            animation.duration = 0.1
+            animation.fillMode = .backwards
+            $0.add(animation, forKey: "move")
+            $0.position = f.frame.origin
         }
-        disappeared .forEach { $0.removeFromSuperlayer() }
+        
+        disappeared.forEach {
+            let animation = CABasicAnimation(keyPath: #keyPath(CALayer.opacity))
+            animation.timingFunction = CAMediaTimingFunction(name: .linear)
+            animation.fromValue = 1.0
+            animation.toValue = 0.0
+            animation.duration = 0.4
+            animation.fillMode = .backwards
+            $0.add(animation, forKey: "disappear")
+            $0.opacity = 0.0
+            
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                $0.removeFromSuperlayer()
+//            }
+        }
     }
 }
 
